@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Create an account</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script type="text/javascript" src="/js/jquery.min.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $("#make_acc_btn_id").on("click", function() {
+                    var name = $.trim($("#name_id").val());
+                    var email = $.trim($("#email_id").val());
+                    var roll = $.trim($("#roll_id").val());
+                    var phno = $.trim($("#phone_number_id").val());
+                    var pwd = $.trim($("#password_id").val());
+                    
+                    $.post("/api/Accounts", JSON.stringify({ "name": name, "email": email, "roll": roll, "phone_no": phno, "pwd": pwd }), function(data) {
+                        if(data.msg === "success") {
+                            alert("done");
+                        } else {
+                            alert("error");
+                        }
+                    }, "json");
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div class="">
+            <label>Name</label>
+            <input type="text" value="" placeholder="#_Name" id="name_id" />
+            
+            <br>
+            
+            <label>Email</label>
+            <input type="text" value="" placeholder="#_Email" id="email_id" />
+            
+            <br>
+            
+            <label>Roll</label>
+            <input type="text" value="" placeholder="#_Roll" id="roll_id" />
+            
+            <br>
+            
+            <label>Phone Number</label>
+            <input type="number" value="" placeholder="#_Phone_Number" id="phone_number_id" />
+            
+            <br>
+            
+            <label>Password</label>
+            <input type="password" value="" placeholder="#_Password" id="password_id" />
+            
+            <br>
+            <button id="make_acc_btn_id">Make Account</button>
+        </div>
+    </body>
+</html>
