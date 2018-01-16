@@ -7,17 +7,380 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0b360a93-030e-46aa-80a8-8976173373c8" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/com/mojo/handlers/problems/GetProblemsHandler.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/com/mojo/handlers/problems/PostProblemsHandler.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/static/dashboard/index.html" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/static/index.html" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/ace.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/ext-beautify.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/ext-chromevox.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/ext-elastic_tabstops_lite.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/ext-emmet.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/ext-error_marker.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/ext-keybinding_menu.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/ext-language_tools.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/ext-linking.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/ext-modelist.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/ext-old_ie.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/ext-searchbox.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/ext-settings_menu.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/ext-spellcheck.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/ext-split.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/ext-static_highlight.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/ext-statusbar.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/ext-textarea.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/ext-themelist.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/ext-whitespace.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/keybinding-emacs.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/keybinding-vim.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-abap.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-abc.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-actionscript.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-ada.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-apache_conf.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-applescript.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-asciidoc.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-assembly_x86.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-autohotkey.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-batchfile.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-bro.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-c9search.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-c_cpp.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-cirru.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-clojure.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-cobol.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-coffee.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-coldfusion.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-csharp.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-csound_document.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-csound_orchestra.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-csound_score.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-css.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-curly.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-d.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-dart.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-diff.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-django.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-dockerfile.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-dot.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-drools.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-eiffel.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-ejs.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-elixir.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-elm.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-erlang.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-forth.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-fortran.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-ftl.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-gcode.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-gherkin.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-gitignore.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-glsl.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-gobstones.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-golang.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-graphqlschema.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-groovy.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-haml.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-handlebars.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-haskell.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-haskell_cabal.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-haxe.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-hjson.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-html.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-html_elixir.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-html_ruby.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-ini.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-io.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-jack.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-jade.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-java.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-javascript.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-json.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-jsoniq.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-jsp.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-jssm.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-jsx.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-julia.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-kotlin.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-latex.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-lean.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-less.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-liquid.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-lisp.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-live_script.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-livescript.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-logiql.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-lsl.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-lua.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-luapage.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-lucene.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-makefile.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-markdown.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-mask.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-matlab.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-maze.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-mel.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-mips_assembler.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-mipsassembler.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-mushcode.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-mysql.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-nix.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-nsis.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-objectivec.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-ocaml.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-pascal.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-perl.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-pgsql.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-php.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-pig.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-plain_text.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-powershell.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-praat.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-prolog.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-properties.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-protobuf.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-python.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-r.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-razor.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-rdoc.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-red.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-rhtml.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-rst.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-ruby.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-rust.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-sass.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-scad.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-scala.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-scheme.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-scss.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-sh.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-sjs.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-smarty.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-snippets.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-soy_template.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-space.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-sparql.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-sql.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-sqlserver.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-stylus.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-svg.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-swift.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-swig.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-tcl.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-tex.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-text.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-textile.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-toml.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-tsx.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-turtle.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-twig.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-typescript.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-vala.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-vbscript.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-velocity.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-verilog.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-vhdl.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-wollok.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-xml.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-xquery.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/mode-yaml.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/abap.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/abc.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/actionscript.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/ada.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/apache_conf.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/applescript.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/asciidoc.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/assembly_x86.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/autohotkey.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/batchfile.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/bro.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/c9search.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/c_cpp.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/cirru.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/clojure.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/cobol.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/coffee.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/coldfusion.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/csharp.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/csound_document.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/csound_orchestra.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/csound_score.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/css.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/curly.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/d.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/dart.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/diff.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/django.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/dockerfile.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/dot.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/drools.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/eiffel.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/ejs.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/elixir.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/elm.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/erlang.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/forth.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/fortran.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/ftl.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/gcode.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/gherkin.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/gitignore.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/glsl.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/gobstones.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/golang.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/graphqlschema.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/groovy.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/haml.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/handlebars.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/haskell.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/haskell_cabal.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/haxe.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/hjson.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/html.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/html_elixir.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/html_ruby.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/ini.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/io.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/jack.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/jade.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/java.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/javascript.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/json.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/jsoniq.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/jsp.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/jssm.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/jsx.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/julia.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/kotlin.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/latex.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/lean.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/less.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/liquid.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/lisp.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/live_script.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/livescript.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/logiql.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/lsl.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/lua.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/luapage.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/lucene.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/makefile.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/markdown.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/mask.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/matlab.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/maze.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/mel.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/mips_assembler.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/mipsassembler.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/mushcode.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/mysql.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/nix.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/nsis.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/objectivec.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/ocaml.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/pascal.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/perl.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/pgsql.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/php.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/pig.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/plain_text.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/powershell.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/praat.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/prolog.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/properties.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/protobuf.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/python.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/r.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/razor.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/rdoc.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/red.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/rhtml.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/rst.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/ruby.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/rust.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/sass.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/scad.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/scala.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/scheme.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/scss.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/sh.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/sjs.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/smarty.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/snippets.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/soy_template.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/space.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/sparql.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/sql.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/sqlserver.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/stylus.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/svg.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/swift.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/swig.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/tcl.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/tex.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/text.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/textile.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/toml.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/tsx.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/turtle.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/twig.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/typescript.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/vala.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/vbscript.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/velocity.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/verilog.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/vhdl.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/wollok.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/xml.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/xquery.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/snippets/yaml.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-ambiance.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-chaos.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-chrome.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-clouds.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-clouds_midnight.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-cobalt.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-crimson_editor.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-dawn.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-dracula.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-dreamweaver.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-eclipse.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-github.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-gob.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-gruvbox.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-idle_fingers.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-iplastic.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-katzenmilch.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-kr_theme.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-kuroir.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-merbivore.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-merbivore_soft.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-mono_industrial.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-monokai.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-pastel_on_dark.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-solarized_dark.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-solarized_light.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-sqlserver.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-terminal.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-textmate.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-tomorrow.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-tomorrow_night.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-tomorrow_night_blue.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-tomorrow_night_bright.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-tomorrow_night_eighties.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-twilight.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-vibrant_ink.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/theme-xcode.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/worker-coffee.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/worker-css.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/worker-html.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/worker-javascript.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/worker-json.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/worker-lua.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/worker-php.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/worker-xml.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/ace-editor/worker-xquery.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/static/problem/create.html" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/handlers/accounts/LoginHandler.class" afterPath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/handlers/accounts/LoginHandler.class" />
-      <change beforePath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/verticles/HttpVerticle.class" afterPath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/verticles/HttpVerticle.class" />
-      <change beforePath="$PROJECT_DIR$/src/com/mojo/handlers/accounts/LoginHandler.java" afterPath="$PROJECT_DIR$/src/com/mojo/handlers/accounts/LoginHandler.java" />
-      <change beforePath="$PROJECT_DIR$/src/com/mojo/verticles/HttpVerticle.java" afterPath="$PROJECT_DIR$/src/com/mojo/verticles/HttpVerticle.java" />
-      <change beforePath="$PROJECT_DIR$/static/account/login.html" afterPath="$PROJECT_DIR$/static/account/login.html" />
+      <change beforePath="$PROJECT_DIR$/static/dashboard/index.html" afterPath="$PROJECT_DIR$/static/dashboard/index.html" />
+      <change beforePath="$PROJECT_DIR$/static/index.html" afterPath="$PROJECT_DIR$/static/index.html" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -57,6 +420,7 @@
         <option value="$PROJECT_DIR$/src/com/mojo/handlers/problems/GetProblemsHandler.java" />
         <option value="$PROJECT_DIR$/src/com/mojo/verticles/HttpVerticle.java" />
         <option value="$PROJECT_DIR$/static/account/login.html" />
+        <option value="$PROJECT_DIR$/static/problem/create.html" />
         <option value="$PROJECT_DIR$/static/dashboard/index.html" />
         <option value="$PROJECT_DIR$/static/index.html" />
       </list>
@@ -83,6 +447,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="AndroidView" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -153,16 +520,13 @@
               <item name="mojo-hp" type="b2602c69:ProjectViewProjectNode" />
               <item name="mojo-hp" type="462c0819:PsiDirectoryNode" />
               <item name="static" type="462c0819:PsiDirectoryNode" />
-              <item name="dashboard" type="462c0819:PsiDirectoryNode" />
+              <item name="problem" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="Scratches" />
-      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -174,8 +538,9 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/static/dashboard" />
+      <recent name="$PROJECT_DIR$/static/problem" />
       <recent name="$PROJECT_DIR$/static" />
+      <recent name="$PROJECT_DIR$/static/dashboard" />
       <recent name="$PROJECT_DIR$/static/css" />
       <recent name="$PROJECT_DIR$/static/account" />
     </key>
@@ -316,7 +681,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="10" y="54" width="1374" height="738" extended-state="6" />
+    <frame x="10" y="54" width="1366" height="734" extended-state="6" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -437,16 +802,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/mojo/handlers/problems/PostProblemsHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="884">
-          <caret line="52" column="47" lean-forward="true" selection-start-line="52" selection-start-column="47" selection-end-line="52" selection-end-column="47" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/mojo/verticles/HttpVerticle.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="334">
@@ -459,25 +814,53 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="221">
           <caret line="19" column="54" lean-forward="false" selection-start-line="19" selection-start-column="54" selection-end-line="19" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/ace-editor/ace.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/problem/create.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-54">
+          <caret line="37" column="127" lean-forward="false" selection-start-line="37" selection-start-column="127" selection-end-line="37" selection-end-column="127" />
+          <folding>
+            <element signature="n#style#0;n#pre#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/mojo/handlers/problems/PostProblemsHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="521">
+          <caret line="52" column="47" lean-forward="true" selection-start-line="52" selection-start-column="47" selection-end-line="52" selection-end-column="47" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="572">
+          <caret line="116" column="64" lean-forward="false" selection-start-line="116" selection-start-column="64" selection-end-line="116" selection-end-column="64" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/static/dashboard/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="765">
-          <caret line="45" column="57" lean-forward="false" selection-start-line="45" selection-start-column="57" selection-end-line="45" selection-end-column="57" />
+        <state relative-caret-position="-391">
+          <caret line="61" column="79" lean-forward="false" selection-start-line="61" selection-start-column="79" selection-end-line="61" selection-end-column="79" />
           <folding>
             <element signature="n#style#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#div#2;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#pre#0;n#div#0;n#div#1;n#div#2;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="351">
-          <caret line="83" column="32" lean-forward="false" selection-start-line="83" selection-start-column="32" selection-end-line="83" selection-end-column="32" />
-          <folding />
         </state>
       </provider>
     </entry>

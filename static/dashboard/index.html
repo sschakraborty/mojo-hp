@@ -8,12 +8,17 @@
         <script type="text/javascript" src="/js/jquery.min.js"></script>
         <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
 
+        <script src="/ace-editor/ace.js"></script>
+        <script src="/ace-editor/ext-language_tools.js"></script>
+        <script src="/ace-editor/theme-xcode.js"></script>
+
         <style type="text/css">
         </style>
 
         <script type="text/javascript">
             function hideAll() {
-                // Do something...
+                $("#panel_1").fadeOut(0);
+                $("#panel_2").fadeOut(0);
             }
 
             function showAllProblems() {
@@ -27,29 +32,111 @@
                     var th = "";
                     data.rows.forEach(function(doc) {
                         var htm = "<div class='panel panel-warning'>";
-                        htm += "<div class='panel-heading'><div class='panel-title'>" + doc.name;
-                        htm += " - (" + doc.code + ")</div></div>";
-                        htm += "<div class='panel-body'>" + doc.question + "</div>";
-                        htm += "<div class='panel-footer text-right'><button class='btn btn-success'>Solve This Problem</button></div>";
+                        htm += "<div class='panel-heading'><div class='panel-title'>" + atob(doc.name);
+                        htm += " - (" + atob(doc.code) + ")</div></div>";
+                        htm += "<div class='panel-body'>" + atob(doc.question) + "</div>";
+                        htm += "<div class='panel-footer text-right'><button class='btn btn-success'";
+                        htm += " onclick='solveProblem(\"" + doc.code + "\");'>Solve This Problem</button></div>";
                         htm += "</div>";
                         th += htm;
                     });
+
                     $("#all_problems_panel").html(th);
+                    $("#panel_1").fadeIn(200);
+                }, "json");
+            }
+
+            function solveProblem(code) {
+                hideAll();
+
+                $.get("/api/problems", { email: window.parent.getEmail(), key: window.parent.getKey() }, function(data) {
+                    if(data.msg != "success") {
+                        location.href = "/account/login.html";
+                    }
+
+                    data.rows.forEach(function(doc) {
+                        if(doc.code === code) {
+                            // We've got the problem right here
+
+                            $("#problem_code_span_id").html(atob(doc.name) + " (" + atob(doc.code) + ")");
+                            $("#problem_question_id").html(atob(doc.question));
+                        }
+                    });
+
+                    $("#panel_2").fadeIn(200);
                 }, "json");
             }
 
             $(document).ready(function() {
                 showAllProblems();
+
+                ace.require("ace/ext/language_tools");
+
+                var editor = ace.edit("editor");
+
+                editor.session.setMode("ace/mode/java");
+                editor.setTheme("ace/theme/xcode");
+
+                editor.setOptions({ fontSize: "14pt" });
+
+                editor.setOptions({
+                    enableBasicAutocompletion: true,
+                    enableSnippets: true,
+                    enableLiveAutocompletion: true
+                });
+
+                $("#language").on("change", function() {
+                    var v = $("#language").val();
+
+                    editor.session.setMode(v);
+                });
             });
         </script>
     </head>
     <body class="container-fluid" style="padding: 25px;">
-        <div class="panel panel-primary">
+        <div class="panel panel-primary" id="panel_1">
             <div class="panel-heading">
                 <div class="panel-title">All Problems</div>
             </div>
 
             <div class="panel-body" id="all_problems_panel">
+            </div>
+        </div>
+
+        <div class="panel panel-primary" id="panel_2" style="display: none;">
+            <div class="panel-heading">
+                <div class="panel-title">Solve <span id="problem_code_span_id"></span></div>
+            </div>
+
+            <div class="panel-body" id="problem_question_id">
+            </div>
+
+            <div class="panel-footer" id="problem_solution_id">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <label>Language</label>
+                        <select id="language" class="form-control">
+                            <option value="ace/mode/java">Java 8 (OpenJDK 8u151 64-bit)</option>
+                            <option value="ace/mode/python">Python 2 (CPython 2.7.12 64-bit)</option>
+                            <option value="ace/mode/python">Python 3 (CPython 3.5.6 64-bit)</option>
+                            <option value="ace/mode/c_cpp">C99 (GCC 6.3.0 64-bit)</option>
+                            <option value="ace/mode/c_cpp">C++14 (GCC 6.3.0 64-bit)</option>
+                        </select>
+                    </div>
+                    <div class="col-xs-3">
+                        <label>...</label>
+                        <button class="btn btn-danger btn-block" id="cancel_button">CANCEL</button>
+                    </div>
+                    <div class="col-xs-3" id="submit_button_container">
+                        <label>...</label>
+                        <button class="btn btn-success btn-block">SUBMIT</button>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 25px;">
+                    <div class="col-xs-12">
+                        <pre id="editor" style="width: 100%; height: 500px;"></pre>
+                    </div>
+                </div>
             </div>
         </div>
     </body>

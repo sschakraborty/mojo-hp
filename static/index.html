@@ -85,6 +85,12 @@
                 });
 
                 $("#frame").attr("src", "account/login.html");
+                $("#create_problem_id").on("click", function() {
+                    $("#frame").attr("src", "problem/create.html");
+                });
+                $("#all_problems_id").on("click", function() {
+                    $("#frame").attr("src", "dashboard");
+                });
             });
         </script>
     </head>
@@ -103,12 +109,13 @@
                     </ul>
 
                     <ul class="nav navbar-nav pull-right" style="display: none;" id="dash_nav">
-                        <li><a href="#LogIn">All Problems</a></li>
-                        <li><a href="#CreateAccount">My Submissions</a></li>
-                        <li><a href="#ShowAll">Leaderboard</a></li>
-                        <li><a href="#ShowAll">My Profile</a></li>
-                        <li><a href="#About">About MOJO</a></li>
-                        <li><a href="#ShowAll" id="log_out_id">Log Out</a></li>
+                        <li><a href="#AllProblems" id="all_problems_id">All Problems</a></li>
+                        <li><a href="#MySubmissions">My Submissions</a></li>
+                        <li><a href="#Leaderboard">Leaderboard</a></li>
+                        <li><a href="#MyProfile">My Profile</a></li>
+                        <li><a href="#CreateProblem" id="create_problem_id">Create Problem</a></li>
+                        <li><a href="#About" class="about_class">About MOJO</a></li>
+                        <li><a href="#LogOut" id="log_out_id">Log Out</a></li>
                     </ul>
                 </div>
             </nav>
