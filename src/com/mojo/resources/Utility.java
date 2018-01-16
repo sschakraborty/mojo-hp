@@ -31,14 +31,19 @@ public class Utility {
     }
     
     public static String encrypt(String msg) {
-        MessageDigest digest;
-        msg = msg + SECRET_KEY;
+        msg += SECRET_KEY;
 
         try {
-            digest = MessageDigest.getInstance("SHA-1");
-            return new String(digest.digest(msg.getBytes()));
+            MessageDigest mDigest = MessageDigest.getInstance("SHA1");
+            byte[] result = mDigest.digest(msg.getBytes());
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < result.length; i++) {
+                sb.append(Integer.toString((result[i] & 0xff) + 0x100, 16).substring(1));
+            }
+
+            return sb.toString();
         } catch(NoSuchAlgorithmException e) {
-            System.err.println("SHA-1 Algorithm Not Supported!");
+            System.err.print("Encryption Algorithm Not Supported");
         }
 
         return null;

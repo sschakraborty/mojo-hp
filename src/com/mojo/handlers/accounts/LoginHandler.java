@@ -18,12 +18,12 @@ public class LoginHandler implements Handler<RoutingContext> {
             
             String email = body.getString("email");
             String pwd = body.getString("pwd");
+            final String keyToEncrypt = email;
             
             if(email != null && pwd != null) {
                 if(email.trim().length() > 0 && pwd.trim().length() > 0) {
                     email = Utility.encode(email);
                     pwd = Utility.encode(pwd);
-                    final String keyToEncrypt = email;
 
                     StringBuilder sql = new StringBuilder("");
                     sql.append("select name from Accounts where ");

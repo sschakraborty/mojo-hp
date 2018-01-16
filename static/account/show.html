@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Account List</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+        <script type="text/javascript" src="/js/jquery.min.js"></script>
+        <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                var htm = "<table class='table table-striped table-hover table-responsive' align='center'>";
+                htm += "<thead><tr><th>Name</th><th>Email</th><th>Roll</th><th>Phone No.</th></tr></thead>";
+                htm += "<tbody>";
+
+                $.get("/api/accounts", {}, function(data) {
+                    data.rows.forEach(function(doc) {
+                        htm += "<tr><td>";
+                        htm += atob(doc.name) + "</td>";
+                        htm += "<td>" + atob(doc.email) + "</td>";
+                        htm += "<td>" + atob(doc.roll) + "</td>";
+                        htm += "<td>" + atob(doc.phone_no) + "</td></tr>";
+                    });
+
+                    htm += "</tbody></table>";
+                    $("#table_container_id").html(htm);
+                }, "json");
+            });
+        </script>
+    </head>
+    <body class="container-fluid" style="padding: 25px;">
+        <div id="table_container_id" class="panel panel-primary">
+        </div>
+    </body>
+</html>

@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Create an account</title>
+        <title>Sign In</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
         <script type="text/javascript" src="/js/jquery.min.js"></script>
+        <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
         <script type="text/javascript">
             $(document).ready(function() {
                 $("#login_acc_btn_id").on("click", function() {
@@ -22,18 +24,20 @@
             });
         </script>
     </head>
-    <body>
-        <div class="">
-            <label>Email</label>
-            <input type="text" value="" placeholder="#_Email" id="email_id" />
-            
-            <br>
-            
-            <label>Password</label>
-            <input type="text" value="" placeholder="#_Password" id="pwd_id" />
+    <body class="container" style="padding: 25px;">
+        <div class="panel panel-primary">
+            <div class="panel-body">
+                <label>Email</label>
+                <input type="text" value="" placeholder="#_Email" id="email_id" class="form-control" />
 
-            <br>
-            <button id="login_acc_btn_id">Log In</button>
+                <br>
+
+                <label>Password</label>
+                <input type="password" value="" placeholder="#_Password" id="pwd_id" class="form-control" />
+
+                <br>
+                <button id="login_acc_btn_id" class="btn btn-success">Log In</button>
+            </div>
         </div>
     </body>
 </html>
