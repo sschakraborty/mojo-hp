@@ -4,6 +4,7 @@ import com.mojo.resources.Database;
 import com.mojo.resources.Utility;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.sql.ResultSet;
 import io.vertx.ext.sql.SQLConnection;
 import io.vertx.ext.web.RoutingContext;
 
@@ -22,7 +23,8 @@ public class LoginHandler implements Handler<RoutingContext> {
                 if(email.trim().length() > 0 && pwd.trim().length() > 0) {
                     email = Utility.encode(email);
                     pwd = Utility.encode(pwd);
-                    
+                    final String keyToEncrypt = email;
+
                     StringBuilder sql = new StringBuilder("");
                     sql.append("select name from Accounts where ");
                     sql.append("email = \"").append(email).append("\" and ");
@@ -33,8 +35,24 @@ public class LoginHandler implements Handler<RoutingContext> {
                             SQLConnection connection = conn.result();
 
                             connection.query(sql.toString(), result -> {
+                                if(result.succeeded()) {
+                                    ResultSet resultSet = result.result();
+                                    JsonObject object = new JsonObject();
 
+                                    if(resultSet.getNumRows() == 1) {
+                                        object.put("msg", "success");
+                                        object.put("key", Utility.encrypt(keyToEncrypt));
+                                    } else {
+                                        object.put("msg", "failure");
+                                    }
+
+                                    context.response().end(object.encodePrettily());
+                                } else {
+                                    context.response().end(Utility.getErrorMsg());
+                                }
                             });
+                        } else {
+                            context.response().end(Utility.getErrorMsg());
                         }
                     });
                 } else {

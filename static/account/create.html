@@ -14,7 +14,7 @@
                     var phno = $.trim($("#phone_number_id").val());
                     var pwd = $.trim($("#password_id").val());
                     
-                    $.post("/api/Accounts", JSON.stringify({ "name": name, "email": email, "roll": roll, "phone_no": phno, "pwd": pwd }), function(data) {
+                    $.post("/api/accounts", JSON.stringify({ "name": name, "email": email, "roll": roll, "phone_no": phno, "pwd": pwd }), function(data) {
                         if(data.msg === "success") {
                             alert("done");
                         } else {

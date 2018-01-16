@@ -5,6 +5,8 @@
 
 package com.mojo.resources;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 public class Utility {
@@ -28,7 +30,17 @@ public class Utility {
         return SCC_MSG;
     }
     
-    public static String getSecretKey() {
-        return SECRET_KEY;
+    public static String encrypt(String msg) {
+        MessageDigest digest;
+        msg = msg + SECRET_KEY;
+
+        try {
+            digest = MessageDigest.getInstance("SHA-1");
+            return new String(digest.digest(msg.getBytes()));
+        } catch(NoSuchAlgorithmException e) {
+            System.err.println("SHA-1 Algorithm Not Supported!");
+        }
+
+        return null;
     }
 }
