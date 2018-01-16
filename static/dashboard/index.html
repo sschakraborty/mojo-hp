@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Sign In</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+        <script type="text/javascript" src="/js/jquery.min.js"></script>
+        <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+
+        <style type="text/css">
+        </style>
+
+        <script type="text/javascript">
+            function hideAll() {
+                // Do something...
+            }
+
+            function showAllProblems() {
+                hideAll();
+
+                $.get("/api/problems", { email: window.parent.getEmail(), key: window.parent.getKey() }, function(data) {
+                    if(data.msg != "success") {
+                        location.href = "/account/login.html";
+                    }
+
+                    var th = "";
+                    data.rows.forEach(function(doc) {
+                        var htm = "<div class='panel panel-warning'>";
+                        htm += "<div class='panel-heading'><div class='panel-title'>" + doc.name;
+                        htm += " - (" + doc.code + ")</div></div>";
+                        htm += "<div class='panel-body'>" + doc.question + "</div>";
+                        htm += "<div class='panel-footer text-right'><button class='btn btn-success'>Solve This Problem</button></div>";
+                        htm += "</div>";
+                        th += htm;
+                    });
+                    $("#all_problems_panel").html(th);
+                }, "json");
+            }
+
+            $(document).ready(function() {
+                showAllProblems();
+            });
+        </script>
+    </head>
+    <body class="container-fluid" style="padding: 25px;">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="panel-title">All Problems</div>
+            </div>
+
+            <div class="panel-body" id="all_problems_panel">
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Sign In</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+        <script type="text/javascript" src="/js/jquery.min.js"></script>
+        <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+
+        <style type="text/css">
+            html, body {
+                display: flex;
+                flex-direction: column;
+                height: 100% !important;
+            }
+            .flex {
+                width: 100%;
+                height: 100%;
+            }
+            iframe {
+                border: 0px;
+                padding: 0px;
+            }
+        </style>
+
+        <script type="text/javascript">
+            var email = "";
+            var authKey = "";
+
+            function setKey(k) {
+                authKey = k;
+            }
+
+            function getKey() {
+                return authKey;
+            }
+
+            function setEmail(k) {
+                email = k;
+            }
+
+            function getEmail() {
+                return email;
+            }
+
+            function switchNav() {
+                if($("#init_nav").css("display") === "none") {
+                    $("#dash_nav").fadeOut(200, function() {
+                        $("#init_nav").fadeIn(200);
+                    });
+                } else {
+                    $("#init_nav").fadeOut(200, function() {
+                        $("#dash_nav").fadeIn(200);
+                    });
+                }
+            }
+
+            function redirDashboard() {
+                $("#frame").attr("src", "dashboard/");
+            }
+
+            $(document).ready(function() {
+                $("#log_in_id").on("mousedown", function() {
+                    $("#frame").attr("src", "account/login.html");
+                });
+
+                $("#create_acc_id").on("mousedown", function() {
+                    $("#frame").attr("src", "account/create.html");
+                });
+
+                $("#show_accounts_id").on("mousedown", function() {
+                    $("#frame").attr("src", "account/show.html");
+                });
+
+                $(".about_class").on("mousedown", function() {
+                    $("#frame").attr("src", "about.html");
+                });
+
+                $("#log_out_id").on("mousedown", function() {
+                    setKey("");
+                    setEmail("");
+                    $("#frame").attr("src", "account/login.html");
+                    switchNav();
+                });
+
+                $("#frame").attr("src", "account/login.html");
+            });
+        </script>
+    </head>
+    <body>
+        <section class="flex" style="height: 50px !important;">
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">Mini Online Judge Operator</a>
+                    </div>
+                    <ul class="nav navbar-nav pull-right" id="init_nav">
+                        <li><a href="#LogIn" id="log_in_id">Log In</a></li>
+                        <li><a href="#CreateAccount" id="create_acc_id">Create Account</a></li>
+                        <li><a href="#ShowAll" id="show_accounts_id">Show All Accounts</a></li>
+                        <li><a href="#About" class="about_class">About MOJO</a></li>
+                    </ul>
+
+                    <ul class="nav navbar-nav pull-right" style="display: none;" id="dash_nav">
+                        <li><a href="#LogIn">All Problems</a></li>
+                        <li><a href="#CreateAccount">My Submissions</a></li>
+                        <li><a href="#ShowAll">Leaderboard</a></li>
+                        <li><a href="#ShowAll">My Profile</a></li>
+                        <li><a href="#About">About MOJO</a></li>
+                        <li><a href="#ShowAll" id="log_out_id">Log Out</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </section>
+        <iframe class="flex" src="" id="frame"></iframe>
+    </body>
+</html>

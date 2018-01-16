@@ -15,7 +15,10 @@
 
                     $.post("/api/accounts/login", JSON.stringify({ "email": email, "pwd": pwd }), function(data) {
                         if(data.msg === "success") {
-                            alert(data.key);
+                            window.parent.setEmail(email);
+                            window.parent.setKey(data.key);
+                            window.parent.switchNav();
+                            window.parent.redirDashboard();
                         } else {
                             alert("Could not log in!");
                         }
