@@ -91,6 +91,9 @@
                 $("#all_problems_id").on("click", function() {
                     $("#frame").attr("src", "dashboard");
                 });
+                $("#my_submissions_id").on("click", function() {
+                    $("#frame").attr("src", "/solution/show.html");
+                });
             });
         </script>
     </head>
@@ -110,7 +113,7 @@
 
                     <ul class="nav navbar-nav pull-right" style="display: none;" id="dash_nav">
                         <li><a href="#AllProblems" id="all_problems_id">All Problems</a></li>
-                        <li><a href="#MySubmissions">My Submissions</a></li>
+                        <li><a href="#MySubmissions" id="my_submissions_id">My Submissions</a></li>
                         <li><a href="#Leaderboard">Leaderboard</a></li>
                         <li><a href="#MyProfile">My Profile</a></li>
                         <li><a href="#CreateProblem" id="create_problem_id">Create Problem</a></li>

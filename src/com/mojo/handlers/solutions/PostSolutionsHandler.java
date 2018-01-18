@@ -30,12 +30,12 @@ public class PostSolutionsHandler implements Handler<RoutingContext> {
                     language = Utility.encode(language);
 
                     StringBuilder sql = new StringBuilder();
-                    sql.append("insert into Solve_log (Accounts_id, Problems_code, code, language, status) values ");
-                    sql.append("(select id from Accounts where email = \"").append(email).append("\" limit 1), ");
-                    sql.append("\"").append(Problems_code).append("\", ");
+                    sql.append("insert into Solve_log (Accounts_id, Problems_code, code, language, status) ");
+                    sql.append("select id, \"").append(Problems_code).append("\", ");
                     sql.append("\"").append(code).append("\", ");
                     sql.append("\"").append(language).append("\", ");
-                    sql.append("\"\");");
+                    sql.append("\"").append("EVAL").append("\" from Accounts where email = ");
+                    sql.append("\"").append(email).append("\" limit 1;");
 
                     Database.getClient().getConnection(conn -> {
                         if (conn.succeeded()) {

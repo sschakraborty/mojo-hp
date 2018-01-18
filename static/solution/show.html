@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My Submissions</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+        <script type="text/javascript" src="/js/jquery.min.js"></script>
+        <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+
+        <script src="/ace-editor/ace.js"></script>
+        <script src="/ace-editor/ext-language_tools.js"></script>
+        <script src="/ace-editor/theme-xcode.js"></script>
+
+        <style type="text/css">
+        </style>
+
+        <script type="text/javascript">
+                function showMySubmissions() {
+                    $.get("/api/submissions", { "email": window.parent.getEmail(), "key": window.parent.getKey() }, function(data) {
+                        var htm = "<table class='table table-bordered table-striped table-hover'>";
+                        htm += "<thead><tr><th>Submission Time</th><th>Problem Code</th><th>Problem Name</th>";
+                        htm += "<th>Language</th><th>Status</th><th>...</th></thead><tbody>";
+
+                        data.rows.forEach(function(doc) {
+                            htm += "<tr><td>" + doc.log_t + "</td>";
+                            htm += "<td>" + atob(doc.problem_code) + "</td>";
+                            htm += "<td>" + atob(doc.name) + "</td>";
+                            htm += "<td>" + atob(doc.language) + "</td>";
+                            htm += "<td>" + doc.status + "</td>";
+                            htm += "<td><button class='btn btn-warning btn-block btn-sm' ";
+                            htm += "onclick='openModal(\""+doc.source_code+"\");'>View Code</button></td></tr>";
+                        });
+
+                        htm += "</tbody>";
+                        $("#submission_table_id").html(htm);
+                    }, "json");
+                }
+
+                function openModal(code) {
+                    code = atob(code);
+                    $("#codeModal .modal-body").html(code);
+                    $("#codeModal").modal("show");
+                }
+
+            $(document).ready(function() {
+                showMySubmissions();
+            });
+        </script>
+    </head>
+    <body class="container-fluid" style="padding: 25px;">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="panel-title">My Submissions</div>
+            </div>
+
+            <div class="panel-body" id="submission_table_id"></div>
+        </div>
+
+
+        <div class="modal fade" id="codeModal" tabindex="-1" role="dialog" aria-labelledby="codeModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="codeModalLabel">Source Code (Your Submission)</h5>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>

@@ -22,9 +22,10 @@ public class GetSolutionsHandler implements Handler<RoutingContext> {
                 email = Utility.encode(email);
 
                 StringBuilder sql = new StringBuilder();
-                sql.append("select name, roll, log_t, Problems_code, status ");
-                sql.append("from Solve_log join Accounts on Accounts_id = id where email = \"");
-                sql.append(email).append("\" order by log_t desc limit 100;");
+                sql.append("select log_t, Solve_log.code as source_code, Problems.code as problem_code, language, ");
+                sql.append("status, Problems.name from Solve_log join Problems on Problems_code = Problems.code ");
+                sql.append("where Accounts_id = (select id from Accounts where email = \"");
+                sql.append(email).append("\" limit 1) order by log_t desc;");
 
                 Database.getClient().getConnection(conn -> {
                     if (conn.succeeded()) {

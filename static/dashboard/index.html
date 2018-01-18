@@ -62,7 +62,7 @@
 
                             $("#problem_code_span_id").html(atob(doc.name) + " (" + atob(doc.code) + ")");
                             $("#problem_question_id").html(atob(doc.question));
-                            currentProblemCode = doc.code;
+                            currentProblemCode = atob(doc.code);
                         }
                     });
 
@@ -100,12 +100,17 @@
                     enableLiveAutocompletion: true
                 });
 
+                $("#cancel_button_id").on("click", function() {
+                    showAllProblems();
+                    editor.setValue("");
+                });
+
                 $("#submit_btn_id").on("click", function() {
                     $.post("/api/submissions", JSON.stringify({ "email": window.parent.getEmail(), "key": window.parent.getKey(), "Problems_code": currentProblemCode, "code": editor.getValue(), "language": $("#language").val() }), function(data) {
                         if(data.msg == "success") {
                             alert("Submitted");
                         } else {
-                            alert("Could not submit);
+                            alert("Could not submit");
                         }
                     }, "json");
                 });
@@ -118,6 +123,7 @@
         </script>
     </head>
     <body class="container-fluid" style="padding: 25px;">
+
         <div class="panel panel-primary" id="panel_1">
             <div class="panel-heading">
                 <div class="panel-title">All Problems</div>
@@ -153,7 +159,7 @@
                     </div>
                     <div class="col-xs-3" id="submit_button_container">
                         <label>...</label>
-                        <button class="btn btn-success btn-block" class="submit_btn_id">SUBMIT</button>
+                        <button class="btn btn-success btn-block" id="submit_btn_id">SUBMIT</button>
                     </div>
                 </div>
                 <div class="row" style="margin-top: 25px;">
@@ -163,5 +169,6 @@
                 </div>
             </div>
         </div>
+
     </body>
 </html>
