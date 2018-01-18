@@ -6,16 +6,7 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0b360a93-030e-46aa-80a8-8976173373c8" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/static/solution/show.html" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/handlers/solutions/GetSolutionsHandler.class" afterPath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/handlers/solutions/GetSolutionsHandler.class" />
-      <change beforePath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/handlers/solutions/PostSolutionsHandler.class" afterPath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/handlers/solutions/PostSolutionsHandler.class" />
-      <change beforePath="$PROJECT_DIR$/src/com/mojo/handlers/solutions/GetSolutionsHandler.java" afterPath="$PROJECT_DIR$/src/com/mojo/handlers/solutions/GetSolutionsHandler.java" />
-      <change beforePath="$PROJECT_DIR$/src/com/mojo/handlers/solutions/PostSolutionsHandler.java" afterPath="$PROJECT_DIR$/src/com/mojo/handlers/solutions/PostSolutionsHandler.java" />
-      <change beforePath="$PROJECT_DIR$/static/dashboard/index.html" afterPath="$PROJECT_DIR$/static/dashboard/index.html" />
-      <change beforePath="$PROJECT_DIR$/static/index.html" afterPath="$PROJECT_DIR$/static/index.html" />
-    </list>
+    <list default="true" id="0b360a93-030e-46aa-80a8-8976173373c8" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
