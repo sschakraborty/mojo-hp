@@ -16,6 +16,8 @@
         </style>
 
         <script type="text/javascript">
+            var currentProblemCode;
+
             function hideAll() {
                 $("#panel_1").fadeOut(0);
                 $("#panel_2").fadeOut(0);
@@ -60,11 +62,24 @@
 
                             $("#problem_code_span_id").html(atob(doc.name) + " (" + atob(doc.code) + ")");
                             $("#problem_question_id").html(atob(doc.question));
+                            currentProblemCode = doc.code;
                         }
                     });
 
                     $("#panel_2").fadeIn(200);
                 }, "json");
+            }
+
+            function mapLanguageCode(aceVal) {
+                if(aceVal === "java8") {
+                    return "ace/mode/java";
+                } else if(aceVal === "py2" || aceVal === "py3") {
+                    return "ace/mode/python";
+                } else if(aceVal === "c99" || aceVal === "cpp14") {
+                    return "ace/mode/c_cpp";
+                } else {
+                    return "undefined";
+                }
             }
 
             $(document).ready(function() {
@@ -85,10 +100,19 @@
                     enableLiveAutocompletion: true
                 });
 
+                $("#submit_btn_id").on("click", function() {
+                    $.post("/api/submissions", JSON.stringify({ "email": window.parent.getEmail(), "key": window.parent.getKey(), "Problems_code": currentProblemCode, "code": editor.getValue(), "language": $("#language").val() }), function(data) {
+                        if(data.msg == "success") {
+                            alert("Submitted");
+                        } else {
+                            alert("Could not submit);
+                        }
+                    }, "json");
+                });
+
                 $("#language").on("change", function() {
                     var v = $("#language").val();
-
-                    editor.session.setMode(v);
+                    editor.session.setMode(mapLanguageCode(v));
                 });
             });
         </script>
@@ -116,20 +140,20 @@
                     <div class="col-xs-6">
                         <label>Language</label>
                         <select id="language" class="form-control">
-                            <option value="ace/mode/java">Java 8 (OpenJDK 8u151 64-bit)</option>
-                            <option value="ace/mode/python">Python 2 (CPython 2.7.12 64-bit)</option>
-                            <option value="ace/mode/python">Python 3 (CPython 3.5.6 64-bit)</option>
-                            <option value="ace/mode/c_cpp">C99 (GCC 6.3.0 64-bit)</option>
-                            <option value="ace/mode/c_cpp">C++14 (GCC 6.3.0 64-bit)</option>
+                            <option value="java8">Java 8 (OpenJDK 8u151 64-bit)</option>
+                            <option value="py2">Python 2 (CPython 2.7.12 64-bit)</option>
+                            <option value="py3">Python 3 (CPython 3.5.6 64-bit)</option>
+                            <option value="c99">C99 (GCC 6.3.0 64-bit)</option>
+                            <option value="cpp14">C++14 (GCC 6.3.0 64-bit)</option>
                         </select>
                     </div>
                     <div class="col-xs-3">
                         <label>...</label>
-                        <button class="btn btn-danger btn-block" id="cancel_button">CANCEL</button>
+                        <button class="btn btn-danger btn-block" id="cancel_button_id">CANCEL</button>
                     </div>
                     <div class="col-xs-3" id="submit_button_container">
                         <label>...</label>
-                        <button class="btn btn-success btn-block">SUBMIT</button>
+                        <button class="btn btn-success btn-block" class="submit_btn_id">SUBMIT</button>
                     </div>
                 </div>
                 <div class="row" style="margin-top: 25px;">
