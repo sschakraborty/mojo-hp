@@ -7,18 +7,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0b360a93-030e-46aa-80a8-8976173373c8" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/com/mojo/verticles/ExecutorVerticle.java" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/mojo-hp.sql" afterPath="$PROJECT_DIR$/mojo-hp.sql" />
-      <change beforePath="$PROJECT_DIR$/out/artifacts/mojo_hp_jar/mojo-hp.jar" afterPath="$PROJECT_DIR$/out/artifacts/mojo_hp_jar/mojo-hp.jar" />
-      <change beforePath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/Main.class" afterPath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/Main.class" />
-      <change beforePath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/handlers/solutions/PostSolutionsHandler.class" afterPath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/handlers/solutions/PostSolutionsHandler.class" />
-      <change beforePath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/resources/Utility.class" afterPath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/resources/Utility.class" />
-      <change beforePath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/verticles/HttpVerticle.class" afterPath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/verticles/HttpVerticle.class" />
-      <change beforePath="$PROJECT_DIR$/src/com/mojo/Main.java" afterPath="$PROJECT_DIR$/src/com/mojo/Main.java" />
-      <change beforePath="$PROJECT_DIR$/src/com/mojo/handlers/solutions/PostSolutionsHandler.java" afterPath="$PROJECT_DIR$/src/com/mojo/handlers/solutions/PostSolutionsHandler.java" />
-      <change beforePath="$PROJECT_DIR$/src/com/mojo/resources/Utility.java" afterPath="$PROJECT_DIR$/src/com/mojo/resources/Utility.java" />
-      <change beforePath="$PROJECT_DIR$/src/com/mojo/verticles/HttpVerticle.java" afterPath="$PROJECT_DIR$/src/com/mojo/verticles/HttpVerticle.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -71,7 +60,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="10" />
     <option name="y" value="54" />
     <option name="width" value="1346" />
@@ -118,14 +107,6 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="mojo" type="462c0819:PsiDirectoryNode" />
               <item name="handlers" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mojo-hp" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mojo-hp" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="mojo" type="462c0819:PsiDirectoryNode" />
-              <item name="handlers" type="462c0819:PsiDirectoryNode" />
-              <item name="solutions" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="mojo-hp" type="b2602c69:ProjectViewProjectNode" />
@@ -307,7 +288,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="10" y="54" width="1366" height="734" extended-state="7" />
+    <frame x="10" y="54" width="1366" height="734" extended-state="6" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -503,28 +484,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/mojo/handlers/solutions/PostSolutionsHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="64" column="65" lean-forward="false" selection-start-line="64" selection-start-column="65" selection-end-line="64" selection-end-column="65" />
-          <folding>
-            <element signature="e#483#484#0" expanded="false" />
-            <element signature="e#523#524#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/mojo/verticles/ExecutorVerticle.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="37" lean-forward="false" selection-start-line="4" selection-start-column="37" selection-end-line="4" selection-end-column="37" />
-          <folding>
-            <element signature="e#415#416#0" expanded="false" />
-            <element signature="e#469#470#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/mojo/verticles/HttpVerticle.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="334">
@@ -537,6 +496,24 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
           <caret line="19" column="75" lean-forward="false" selection-start-line="19" selection-start-column="75" selection-end-line="19" selection-end-column="75" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/mojo/verticles/ExecutorVerticle.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-414">
+          <caret line="10" column="13" lean-forward="false" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/mojo/handlers/solutions/PostSolutionsHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="167">
+          <caret line="64" column="65" lean-forward="false" selection-start-line="64" selection-start-column="65" selection-end-line="64" selection-end-column="65" />
           <folding />
         </state>
       </provider>
