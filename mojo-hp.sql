@@ -27,6 +27,7 @@ create table if not exists Testcases (
 ) engine = InnoDB;
 
 create table if not exists Solve_log (
+    log_id varchar(50) primary key not null,
 	log_t timestamp not null default current_timestamp,
 	Accounts_id integer unsigned not null,
     Problems_code varchar(25) not null,

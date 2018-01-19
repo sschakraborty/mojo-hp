@@ -3,11 +3,20 @@ package com.mojo.handlers.solutions;
 import com.mojo.resources.Database;
 import com.mojo.resources.Utility;
 import io.vertx.core.Handler;
+import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.sql.SQLConnection;
 import io.vertx.ext.web.RoutingContext;
 
+import java.util.Random;
+
 public class PostSolutionsHandler implements Handler<RoutingContext> {
+    private final EventBus eventBus;
+
+    public PostSolutionsHandler(EventBus eventBus) {
+        this.eventBus = eventBus;
+    }
+
     @Override
     public void handle(RoutingContext context) {
         context.response().putHeader("Content-type", "application/json");
@@ -29,13 +38,23 @@ public class PostSolutionsHandler implements Handler<RoutingContext> {
                     code = Utility.encode(code);
                     language = Utility.encode(language);
 
+                    // Generate a long unique id per submission
+                    long random = Utility.getRandomLong();
+
                     StringBuilder sql = new StringBuilder();
-                    sql.append("insert into Solve_log (Accounts_id, Problems_code, code, language, status) ");
-                    sql.append("select id, \"").append(Problems_code).append("\", ");
+                    sql.append("insert into Solve_log (log_id, Accounts_id, Problems_code, code, language, status) ");
+                    sql.append("select \"").append(random).append("\", ");
+                    sql.append("Accounts.id, \"").append(Problems_code).append("\", ");
                     sql.append("\"").append(code).append("\", ");
                     sql.append("\"").append(language).append("\", ");
                     sql.append("\"").append("EVAL").append("\" from Accounts where email = ");
                     sql.append("\"").append(email).append("\" limit 1;");
+
+                    JsonObject submission = new JsonObject();
+                    submission.put("id", random + "");
+                    submission.put("problemCode", Problems_code);
+                    submission.put("code", code);
+                    submission.put("lang", language);
 
                     Database.getClient().getConnection(conn -> {
                         if (conn.succeeded()) {
@@ -43,6 +62,7 @@ public class PostSolutionsHandler implements Handler<RoutingContext> {
 
                             connection.query(sql.toString(), result -> {
                                 if (result.succeeded()) {
+                                    eventBus.send("code-pipeline", submission);
                                     context.response().end(Utility.getSuccessMsg());
                                 } else {
                                     context.response().end(Utility.getErrorMsg());

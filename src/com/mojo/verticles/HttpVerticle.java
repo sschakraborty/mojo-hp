@@ -42,7 +42,7 @@ public class HttpVerticle extends AbstractVerticle {
         // POST /api/submissions -> Post a solution to Judge
 
         router.route(HttpMethod.GET, "/api/submissions").handler(new GetSolutionsHandler());
-        router.route(HttpMethod.POST, "/api/submissions").handler(new PostSolutionsHandler());
+        router.route(HttpMethod.POST, "/api/submissions").handler(new PostSolutionsHandler(vertx.eventBus()));
         
         try {
             vertx.createHttpServer().requestHandler(router::accept).listen(12400);
