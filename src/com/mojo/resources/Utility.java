@@ -53,7 +53,7 @@ public class Utility {
     }
 
     public static long getRandomLong() {
-        return random.nextLong();
+        return Math.abs(random.nextLong());
     }
     public static String getJudgeFolderPath() { return JUDGE_FOLDER_PATH; }
 }

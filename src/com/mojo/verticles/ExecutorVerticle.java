@@ -9,8 +9,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class ExecutorVerticle extends AbstractVerticle {
     private final ExecutorService pool;
@@ -29,9 +31,9 @@ public class ExecutorVerticle extends AbstractVerticle {
 
     private static final class Job implements Runnable {
         private final String id, problemCode, code, lang;
-        private final JsonObject testcases;
+        private final List<JsonObject> testcases;
 
-        public Job(String id, String problemCode, String code, String lang, JsonObject testcases) {
+        public Job(String id, String problemCode, String code, String lang, List<JsonObject> testcases) {
             this.code = Utility.decode(code);
             this.problemCode = problemCode;
             this.lang = Utility.decode(lang);
@@ -39,11 +41,102 @@ public class ExecutorVerticle extends AbstractVerticle {
             this.testcases = testcases;
         }
 
+        private String python2Judge(File dirPath, String fileName) {
+            try {
+                ProcessBuilder builder = new ProcessBuilder("python", fileName);
+                builder.directory(dirPath);
+
+                builder.redirectErrorStream(true);
+                File output = new File(builder.directory() + "/OUTPUT.txt");
+                output.createNewFile();
+                builder.redirectOutput(output);
+
+                for(JsonObject testcase : testcases) {
+                    builder.redirectInput(new File(testcase.getString("in_path")));
+                    Process p = builder.start();
+                    p.waitFor(testcase.getInteger("tl"), TimeUnit.MILLISECONDS);
+
+                    if(p.isAlive()) {
+                        // Time Limit Exceeded Error
+                        p.destroyForcibly();
+                        return "TLE";
+                    } else {
+                        // Python process terminated successfully
+                        // judge by diff
+
+                        ProcessBuilder diff = new ProcessBuilder("diff", "OUTPUT.txt",
+                                testcase.getString("out_path"));
+                        diff.directory(builder.directory());
+                        Process px = diff.start();
+                        px.waitFor();
+                        if(px.getInputStream().available() == 0) {
+                            // Right answer
+                            return "ACC";
+                        } else {
+                            // Wrong answer
+                            return "WRA";
+                        }
+                    }
+                }
+            } catch(Exception e) {
+                System.err.println("[Error]: " + e.getMessage());
+            }
+
+            return "IERR";
+        }
+
+
+        private String python3Judge(File dirPath, String fileName) {
+            try {
+                ProcessBuilder builder = new ProcessBuilder("python3", fileName);
+                builder.directory(dirPath);
+
+                builder.redirectErrorStream(true);
+                File output = new File(builder.directory() + "/OUTPUT.txt");
+                output.createNewFile();
+                builder.redirectOutput(output);
+
+                for(JsonObject testcase : testcases) {
+                    builder.redirectInput(new File(testcase.getString("in_path")));
+                    Process p = builder.start();
+                    p.waitFor(testcase.getInteger("tl"), TimeUnit.MILLISECONDS);
+
+                    if(p.isAlive()) {
+                        // Time Limit Exceeded Error
+                        p.destroyForcibly();
+                        return "TLE";
+                    } else {
+                        // Python process terminated successfully
+                        // judge by diff
+
+                        ProcessBuilder diff = new ProcessBuilder("diff", "OUTPUT.txt",
+                                testcase.getString("out_path"));
+                        diff.directory(builder.directory());
+                        Process px = diff.start();
+                        px.waitFor();
+                        if(px.getInputStream().available() == 0) {
+                            // Right answer
+                            return "ACC";
+                        } else {
+                            // Wrong answer
+                            return "WRA";
+                        }
+                    }
+                }
+            } catch(Exception e) {
+                System.err.println("[Error]: " + e.getMessage());
+            }
+
+            return "IERR";
+        }
+
+
         @Override
         public void run() {
             // Write to a file in Judge Test Folder
             String dirPath = Utility.getJudgeFolderPath() + "/" + id;
-            String filePath = dirPath + "/" + id + mapExtension(lang);
+            String fileName = id + mapExtension(lang);
+            String filePath = dirPath + "/" + fileName;
 
             try {
                 File file = new File(dirPath);
@@ -53,6 +146,42 @@ public class ExecutorVerticle extends AbstractVerticle {
                 writer.print(code);
                 writer.close();
                 fout.close();
+
+                // Detect the language and route accordingly
+                String s = "ULANG";
+
+                if(lang.equals("py2")) {
+                    s = python2Judge(file, fileName);
+                }
+
+                if(lang.equals("py3")) {
+                    s = python3Judge(file, fileName);
+                }
+
+                // Update into database
+                final String resultMsg = s;
+                Database.getClient().getConnection(conn -> {
+                    if(conn.succeeded()) {
+                        SQLConnection connection = conn.result();
+
+                        StringBuilder sql = new StringBuilder();
+                        sql.append("update Solve_log set status = \"");
+                        sql.append(resultMsg);
+                        sql.append("\" where log_id = \"");
+                        sql.append(id);
+                        sql.append("\";");
+
+                        connection.update(sql.toString(), result -> {
+                            if(result.failed()) {
+                                System.err.println(result.cause().getMessage());
+                            }
+                        });
+
+                        connection.close();
+                    } else {
+                        System.err.println("Database error: " + conn.cause().getMessage());
+                    }
+                });
             } catch(IOException e) {
                 System.err.println(e.getLocalizedMessage());
             }
@@ -80,7 +209,7 @@ public class ExecutorVerticle extends AbstractVerticle {
 
                     connection.query(sql.toString(), result -> {
                         if(result.succeeded()) {
-                            JsonObject testcases = result.result().toJson();
+                            List<JsonObject> testcases = result.result().getRows();
                             pool.submit(new Job(id, problemCode, code, lang, testcases));
                         } else {
                             System.err.println("Query failure while fetching testcases: "
