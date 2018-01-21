@@ -69,20 +69,17 @@ public class ExecutorVerticle extends AbstractVerticle {
                         diff.directory(builder.directory());
                         Process px = diff.start();
                         px.waitFor();
-                        if(px.getInputStream().available() == 0) {
-                            // Right answer
-                            return "ACC";
-                        } else {
-                            // Wrong answer
+                        if(px.getInputStream().available() != 0) {
                             return "WRA";
                         }
                     }
                 }
             } catch(Exception e) {
                 System.err.println("[Error]: " + e.getMessage());
+                return "IERR";
             }
 
-            return "IERR";
+            return "ACC";
         }
 
 
@@ -114,20 +111,17 @@ public class ExecutorVerticle extends AbstractVerticle {
                         diff.directory(builder.directory());
                         Process px = diff.start();
                         px.waitFor();
-                        if(px.getInputStream().available() == 0) {
-                            // Right answer
-                            return "ACC";
-                        } else {
-                            // Wrong answer
+                        if(px.getInputStream().available() != 0) {
                             return "WRA";
                         }
                     }
                 }
             } catch(Exception e) {
                 System.err.println("[Error]: " + e.getMessage());
+                return "IERR";
             }
 
-            return "IERR";
+            return "ACC";
         }
 
 
