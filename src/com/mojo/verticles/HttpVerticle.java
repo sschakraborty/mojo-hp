@@ -3,6 +3,8 @@ package com.mojo.verticles;
 import com.mojo.handlers.accounts.GetAccountHandler;
 import com.mojo.handlers.accounts.LoginHandler;
 import com.mojo.handlers.accounts.PostAccountHandler;
+import com.mojo.handlers.leaderboard.GetProblemWiseHandler;
+import com.mojo.handlers.leaderboard.GetRankHandler;
 import com.mojo.handlers.problems.GetProblemsHandler;
 import com.mojo.handlers.problems.PostProblemsHandler;
 import com.mojo.handlers.solutions.GetSolutionsHandler;
@@ -43,6 +45,13 @@ public class HttpVerticle extends AbstractVerticle {
 
         router.route(HttpMethod.GET, "/api/submissions").handler(new GetSolutionsHandler());
         router.route(HttpMethod.POST, "/api/submissions").handler(new PostSolutionsHandler(vertx.eventBus()));
+
+        // Leaderboard API
+        // GET /api/leaderboard/score
+        // GET /api/leaderboard/rank
+
+        router.route(HttpMethod.GET, "/api/leaderboard/score").handler(new GetProblemWiseHandler());
+        router.route(HttpMethod.GET, "/api/leaderboard/rank").handler(new GetRankHandler());
         
         try {
             vertx.createHttpServer().requestHandler(router::accept).listen(12400);

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Account List</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+        <script type="text/javascript" src="/js/jquery.min.js"></script>
+        <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                var htm = "<table class='table table-striped table-hover table-responsive' align='center'>";
+                htm += "<thead><tr><th>Problem Code</th><th>Problem Name</th><th># Attempts</th><th>";
+                htm += "Score</th></tr></thead>";
+                htm += "<tbody>";
+
+                $.get("/api/leaderboard/score", { "email": window.parent.getEmail(), "key": window.parent.getKey() }, function(data) {
+                    data.rows.forEach(function(doc) {
+                        htm += "<tr><td>";
+                        htm += atob(doc.Problems_code) + "</td>";
+                        htm += "<td>" + atob(doc.name) + "</td>";
+                        htm += "<td>" + doc.Attempts + "</td>";
+                        htm += "<td>" + doc.Score + "</td></tr>";
+                    });
+
+                    htm += "</tbody></table>";
+                    $("#table_container_id").html(htm);
+                }, "json");
+
+
+                var htmx = "<table class='table table-striped table-hover table-responsive' align='center'>";
+                htmx += "<thead><tr><th>Name</th><th>Email</th><th>Roll</th><th>";
+                htmx += "Score</th></tr></thead>";
+                htmx += "<tbody>";
+
+                $.get("/api/leaderboard/rank", { "email": window.parent.getEmail(), "key": window.parent.getKey() }, function(data) {
+                    data.rows.forEach(function(doc) {
+                        htmx += "<tr><td>";
+                        htmx += atob(doc.name) + "</td>";
+                        htmx += "<td>" + atob(doc.email) + "</td>";
+                        htmx += "<td>" + atob(doc.roll) + "</td>";
+                        htmx += "<td>" + doc.Score + "</td></tr>";
+                    });
+
+                    htm += "</tbody></table>";
+                    $("#rank_table_container_id").html(htmx);
+                }, "json");
+            });
+        </script>
+    </head>
+    <body class="container" style="padding: 25px;">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="panel-title">Rank Table</div>
+            </div>
+            <div class="panel-body" id="rank_table_container_id">
+            </div>
+        </div>
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="panel-title">Problem Wise Analysis</div>
+            </div>
+            <div class="panel-body" id="table_container_id">
+            </div>
+        </div>
+    </body>
+</html>
