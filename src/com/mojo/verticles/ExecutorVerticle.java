@@ -125,6 +125,64 @@ public class ExecutorVerticle extends AbstractVerticle {
         }
 
 
+        private String clangJudge(File dirPath, String fileName) {
+            try {
+                ProcessBuilder builder = new ProcessBuilder("gcc", "-w", "-O", "-lm", "-lpthread", fileName, "-o", "object");
+                builder.directory(dirPath);
+                builder.redirectErrorStream(true);
+
+                Process compiler = builder.start();
+                compiler.waitFor(3500, TimeUnit.MILLISECONDS);
+                if(compiler.isAlive()) {
+                    compiler.destroyForcibly();
+                    return "CTLE";
+                } else {
+                    if(compiler.getInputStream().available() != 0) {
+                        return "CERR";
+                    }
+
+                    builder = new ProcessBuilder("./object");
+                    builder.directory(dirPath);
+                    builder.redirectErrorStream(true);
+
+                    File output = new File(builder.directory() + "/OUTPUT.txt");
+                    output.createNewFile();
+                    builder.redirectOutput(output);
+
+                    for (JsonObject testcase : testcases) {
+                        builder.redirectInput(new File(testcase.getString("in_path")));
+                        Process p = builder.start();
+                        p.waitFor(testcase.getInteger("tl"), TimeUnit.MILLISECONDS);
+
+                        if (p.isAlive()) {
+                            // Time Limit Exceeded Error
+                            p.destroyForcibly();
+                            return "TLE";
+                        } else {
+                            // Python process terminated successfully
+                            // judge by diff
+
+                            ProcessBuilder diff = new ProcessBuilder("diff", "OUTPUT.txt",
+                                    testcase.getString("out_path"));
+                            diff.directory(builder.directory());
+                            Process px = diff.start();
+                            px.waitFor();
+                            if (px.getInputStream().available() != 0) {
+                                return "WRA";
+                            }
+                        }
+                    }
+
+                }
+            } catch(Exception e) {
+                System.err.println("[Error]: " + e.getMessage());
+                return "IERR";
+            }
+
+            return "ACC";
+        }
+
+
         @Override
         public void run() {
             // Write to a file in Judge Test Folder
@@ -150,6 +208,10 @@ public class ExecutorVerticle extends AbstractVerticle {
 
                 if(lang.equals("py3")) {
                     s = python3Judge(file, fileName);
+                }
+
+                if(lang.equals("c99")) {
+                    s = clangJudge(file, fileName);
                 }
 
                 // Update into database
@@ -204,7 +266,7 @@ public class ExecutorVerticle extends AbstractVerticle {
                     connection.query(sql.toString(), result -> {
                         if(result.succeeded()) {
                             List<JsonObject> testcases = result.result().getRows();
-                            pool.submit(new Job(id, problemCode, code, lang, testcases));
+                            pool.submit(new Job(id, problemCode, Utility.decode(code), lang, testcases));
                         } else {
                             System.err.println("Query failure while fetching testcases: "
                                     + conn.cause().getMessage());

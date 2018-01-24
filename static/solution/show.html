@@ -29,7 +29,7 @@
                             htm += "<td>" + atob(doc.language) + "</td>";
                             htm += "<td>" + doc.status + "</td>";
                             htm += "<td><button class='btn btn-warning btn-block btn-sm' ";
-                            htm += "onclick='openModal(\""+doc.source_code+"\");'>View Code</button></td></tr>";
+                            htm += "onclick='openModal(\""+(doc.source_code)+"\");'>View Code</button></td></tr>";
                         });
 
                         htm += "</tbody>";
@@ -38,8 +38,9 @@
                 }
 
                 function openModal(code) {
-                    code = atob(code);
-                    $("#codeModal .modal-body").html(code);
+                    code = atob(atob(code));
+                    $("#codeModal .modal-body").html("<pre><code><span id='modal-body-code'></span></code></pre>");
+                    $("#modal-body-code").text(code);
                     $("#codeModal").modal("show");
                 }
 
