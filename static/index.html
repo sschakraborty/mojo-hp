@@ -97,6 +97,13 @@
                 $("#leaderboard_id").on("click", function() {
                     $("#frame").attr("src", "/dashboard/leaderboard.html");
                 });
+
+                $("#about_mojo_id_1").on("click", function() {
+                    $("#frame").attr("src", "/about.html");
+                });
+                $("#about_mojo_id_2").on("click", function() {
+                    $("#frame").attr("src", "/about.html");
+                });
             });
         </script>
     </head>
@@ -111,7 +118,7 @@
                         <li><a href="#LogIn" id="log_in_id">Log In</a></li>
                         <li><a href="#CreateAccount" id="create_acc_id">Create Account</a></li>
                         <li><a href="#ShowAll" id="show_accounts_id">Show All Accounts</a></li>
-                        <li><a href="#About" class="about_class">About MOJO</a></li>
+                        <li><a href="#About" class="about_class" id="about_mojo_id_1">About MOJO</a></li>
                     </ul>
 
                     <ul class="nav navbar-nav pull-right" style="display: none;" id="dash_nav">
@@ -120,7 +127,7 @@
                         <li><a href="#Leaderboard"id="leaderboard_id">Leaderboard</a></li>
                         <li><a href="#MyProfile">My Profile</a></li>
                         <li><a href="#CreateProblem" id="create_problem_id">Create Problem</a></li>
-                        <li><a href="#About" class="about_class">About MOJO</a></li>
+                        <li><a href="#About" class="about_class" id="about_mojo_id_2">About MOJO</a></li>
                         <li><a href="#LogOut" id="log_out_id">Log Out</a></li>
                     </ul>
                 </div>
