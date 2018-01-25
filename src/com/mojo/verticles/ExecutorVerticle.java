@@ -185,7 +185,7 @@ public class ExecutorVerticle extends AbstractVerticle {
 
         private String cpp14Judge(File dirPath, String fileName) {
             try {
-                ProcessBuilder builder = new ProcessBuilder("g++", "-w", "-O", fileName, "-o", "object");
+                ProcessBuilder builder = new ProcessBuilder("g++", "-w", "-O", "-std=c++14", fileName, "-o", "object");
                 builder.directory(dirPath);
                 builder.redirectErrorStream(true);
 
