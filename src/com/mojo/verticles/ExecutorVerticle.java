@@ -183,6 +183,130 @@ public class ExecutorVerticle extends AbstractVerticle {
         }
 
 
+        private String cpp14Judge(File dirPath, String fileName) {
+            try {
+                ProcessBuilder builder = new ProcessBuilder("g++", "-w", "-O", fileName, "-o", "object");
+                builder.directory(dirPath);
+                builder.redirectErrorStream(true);
+
+                Process compiler = builder.start();
+                compiler.waitFor(3500, TimeUnit.MILLISECONDS);
+                if(compiler.isAlive()) {
+                    compiler.destroyForcibly();
+                    return "CTLE";
+                } else {
+                    if(compiler.getInputStream().available() != 0) {
+                        return "CERR";
+                    }
+
+                    builder = new ProcessBuilder("./object");
+                    builder.directory(dirPath);
+                    builder.redirectErrorStream(true);
+
+                    File output = new File(builder.directory() + "/OUTPUT.txt");
+                    output.createNewFile();
+                    builder.redirectOutput(output);
+
+                    for (JsonObject testcase : testcases) {
+                        builder.redirectInput(new File(testcase.getString("in_path")));
+                        Process p = builder.start();
+                        p.waitFor(testcase.getInteger("tl"), TimeUnit.MILLISECONDS);
+
+                        if (p.isAlive()) {
+                            // Time Limit Exceeded Error
+                            p.destroyForcibly();
+                            return "TLE";
+                        } else {
+                            // Python process terminated successfully
+                            // judge by diff
+
+                            ProcessBuilder diff = new ProcessBuilder("diff", "OUTPUT.txt",
+                                    testcase.getString("out_path"));
+                            diff.directory(builder.directory());
+                            Process px = diff.start();
+                            px.waitFor();
+                            if (px.getInputStream().available() != 0) {
+                                return "WRA";
+                            }
+                        }
+                    }
+
+                }
+            } catch(Exception e) {
+                System.err.println("[Error]: " + e.getMessage());
+                return "IERR";
+            }
+
+            return "ACC";
+        }
+
+
+        private String javaJudge(File dirPath, String fileName) {
+            try {
+                ProcessBuilder builder = new ProcessBuilder("javac", "-O", fileName);
+                builder.directory(dirPath);
+                builder.redirectErrorStream(true);
+
+                Process compiler = builder.start();
+                compiler.waitFor(4500, TimeUnit.MILLISECONDS);
+                if(compiler.isAlive()) {
+                    compiler.destroyForcibly();
+                    return "CTLE";
+                } else {
+                    if(compiler.getInputStream().available() != 0) {
+                        return "CERR";
+                    }
+                    File[] fileList = dirPath.listFiles();
+                    String classFileName = "Undefined";
+
+                    for(File f : fileList) {
+                        if(f.getName().contains(".class")) {
+                            classFileName = f.getName().substring(0, f.getName().length() - 6);
+                        }
+                    }
+
+                    builder = new ProcessBuilder("java", classFileName);
+                    builder.directory(dirPath);
+                    builder.redirectErrorStream(true);
+
+                    File output = new File(builder.directory() + "/OUTPUT.txt");
+                    output.createNewFile();
+                    builder.redirectOutput(output);
+
+                    for (JsonObject testcase : testcases) {
+                        builder.redirectInput(new File(testcase.getString("in_path")));
+                        Process p = builder.start();
+                        p.waitFor(testcase.getInteger("tl"), TimeUnit.MILLISECONDS);
+
+                        if (p.isAlive()) {
+                            // Time Limit Exceeded Error
+                            p.destroyForcibly();
+                            return "TLE";
+                        } else {
+                            // Python process terminated successfully
+                            // judge by diff
+
+                            ProcessBuilder diff = new ProcessBuilder("diff", "OUTPUT.txt",
+                                    testcase.getString("out_path"));
+                            diff.directory(builder.directory());
+                            Process px = diff.start();
+                            px.waitFor();
+                            if (px.getInputStream().available() != 0) {
+                                return "WRA";
+                            }
+                        }
+                    }
+
+                }
+            } catch(Exception e) {
+                System.err.println("[Error]: " + e.getMessage());
+                return "IERR";
+            }
+
+            return "ACC";
+        }
+
+
         @Override
         public void run() {
             // Write to a file in Judge Test Folder
@@ -212,6 +336,14 @@ public class ExecutorVerticle extends AbstractVerticle {
 
                 if(lang.equals("c99")) {
                     s = clangJudge(file, fileName);
+                }
+
+                if(lang.equals("cpp14")) {
+                    s = cpp14Judge(file, fileName);
+                }
+
+                if(lang.equals("java8")) {
+                    s = javaJudge(file, fileName);
                 }
 
                 // Update into database
