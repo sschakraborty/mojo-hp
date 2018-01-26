@@ -127,7 +127,7 @@ public class ExecutorVerticle extends AbstractVerticle {
 
         private String clangJudge(File dirPath, String fileName) {
             try {
-                ProcessBuilder builder = new ProcessBuilder("gcc", "-w", "-O", "-lm", "-lpthread", fileName, "-o", "object");
+                ProcessBuilder builder = new ProcessBuilder("gcc", fileName, "-w", "-O", "-lm", "-lpthread", "-o", "object");
                 builder.directory(dirPath);
                 builder.redirectErrorStream(true);
 
@@ -185,7 +185,7 @@ public class ExecutorVerticle extends AbstractVerticle {
 
         private String cpp14Judge(File dirPath, String fileName) {
             try {
-                ProcessBuilder builder = new ProcessBuilder("g++", "-w", "-O", "-std=c++14", fileName, "-o", "object");
+                ProcessBuilder builder = new ProcessBuilder("g++", fileName, "-w", "-O", "-std=c++14", "-o", "object");
                 builder.directory(dirPath);
                 builder.redirectErrorStream(true);
 
