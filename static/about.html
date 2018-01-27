@@ -25,11 +25,233 @@
                 <div class="panel-title">About MOJO</div>
             </div>
 
-            <div class="panel-body">
-                <h4>
-                    MOJO stands for Mini Online Judge Operator that was born out of a revenge endeavour of two
-                    students at RCCIIT when they were ditched from operating their shit judge.
-                </h4>
+            <div class="panel-body text-justify">
+                <font size="3">
+                    <h2 class="text-center">Mini Online Judge Operator</h2>
+                    <hr color="#000000">
+                    MOJO stands for Mini Online Judge Operator. This is an open source
+                    project maintained by <b>Subhadra Sundar Chakraborty</b> and <b>Suvaditya Sur</b>
+                    under Apache 1.0 License at Github. The official git URL of this project is
+                    <code>https://github.com/sschakraborty/mojo-hp</code>
+
+                    <br><br>
+
+                    MOJO compile and execute code, and test them with pre-constructed data.
+                    Submitted code may be run with restrictions, including compile time limit, run time
+                    limit and so on. The output of the code will be captured by the system, and
+                    compared with the standard output. The system will then return the result.
+
+                    <br><br>
+
+                    The marking scheme of MOJO is
+                    <code>Score for an accepted problem = 100 / (Total # of submissions)</code>.
+                    This way MOJO ranks users in real-time.
+                </font>
+            </div>
+        </div>
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="panel-title">Java 8 Fast I/O Template</div>
+            </div>
+
+            <div class="panel-body text-justify">
+                <font size="3">
+                    Using <code>Reader</code> class<br><br>
+                    This uses <code>DataInputStream</code> to read through the stream of data and uses
+                    <code>read()</code>
+                    and <code>nextInt()</code> methods for taking inputs. This is by far one of the fastest
+                    ways of taking input. Below is the sample implementation of this method.
+                    <br><br>
+
+<pre>
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Scanner;
+import java.util.StringTokenizer;
+
+class Main {
+    static class Reader {
+        final private int BUFFER_SIZE = 1 << 16;
+        private DataInputStream din;
+        private byte[] buffer;
+        private int bufferPointer, bytesRead;
+
+        public Reader() {
+            din = new DataInputStream(System.in);
+            buffer = new byte[BUFFER_SIZE];
+            bufferPointer = bytesRead = 0;
+        }
+
+        public Reader(String file_name) throws IOException {
+            din = new DataInputStream(new FileInputStream(file_name));
+            buffer = new byte[BUFFER_SIZE];
+            bufferPointer = bytesRead = 0;
+        }
+
+        public String readLine() throws IOException {
+            byte[] buf = new byte[256000];
+            int cnt = 0, c;
+            while ((c = read()) != -1) {
+                if (c == '\n')
+                    break;
+                buf[cnt++] = (byte) c;
+            }
+            return new String(buf, 0, cnt);
+        }
+
+        public int nextInt() throws IOException {
+            int ret = 0;
+            byte c = read();
+            while (c <= ' ') c = read();
+            boolean neg = (c == '-');
+
+            if(neg) c = read();
+
+            do {
+                ret = ret * 10 + c - '0';
+            } while ((c = read()) >= '0' && c <= '9');
+
+            if(neg)
+                return -ret;
+            return ret;
+        }
+
+        public long nextLong() throws IOException {
+            long ret = 0;
+            byte c = read();
+            while (c <= ' ') c = read();
+            boolean neg = (c == '-');
+
+            if(neg) c = read();
+            do {
+                ret = ret * 10 + c - '0';
+            } while ((c = read()) >= '0' && c <= '9');
+
+            if(neg)
+                return -ret;
+            return ret;
+        }
+
+        public double nextDouble() throws IOException {
+            double ret = 0, div = 1;
+            byte c = read();
+            while (c <= ' ') c = read();
+            boolean neg = (c == '-');
+
+            if(neg) c = read();
+
+            do {
+                ret = ret * 10 + c - '0';
+            } while ((c = read()) >= '0' && c <= '9');
+
+            if (c == '.') {
+                while ((c = read()) >= '0' && c <= '9') {
+                    ret += (c - '0') / (div *= 10);
+                }
+            }
+
+            if(neg)
+                return -ret;
+            return ret;
+        }
+
+        private void fillBuffer() throws IOException {
+            bytesRead = din.read(buffer, bufferPointer = 0, BUFFER_SIZE);
+            if (bytesRead == -1) buffer[0] = -1;
+        }
+
+        private byte read() throws IOException {
+            if (bufferPointer == bytesRead) fillBuffer();
+            return buffer[bufferPointer++];
+        }
+
+        public void close() throws IOException {
+            if(din == null) return;
+            din.close();
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        Reader in = new Reader();
+
+        int n = in.nextInt();
+        int k = in.nextInt();
+        int count=0;
+
+        while (n-- > 0) {
+            int x = in.nextInt();
+            if (x % k == 0)
+               count++;
+        }
+
+        System.out.println(count);
+    }
+}
+</pre>
+                </font>
+            </div>
+        </div>
+
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="panel-title">Python (2 and 3) Fast I/O Template</div>
+            </div>
+
+            <div class="panel-body text-justify">
+                <font size="3">
+                    A fast I/O method using inbuilt stdin, stdout (Python 2 and 3)<br><br>
+                    <ul>
+                        <li>
+                            <code>sys.stdin</code> on the other hand is a File Object.
+                            It is like creating any other file object one could create to read input
+                            from the file. In this case, the file will be standard input buffer.
+                        </li>
+                        <li>
+                            <code>stdout.write(‘D\n’)</code> is faster than <code>print ‘D’</code>.
+                        </li>
+                        <li>
+                            Even faster is to write all once by
+                            <code>stdout.write(“”.join(list-comprehension))</code>
+                            but this makes memory usage dependent on size of input.
+                        </li>
+                    </ul>
+                    <br>
+<pre>
+from sys import stdin, stdout
+
+def main():
+    # Reading a line
+    n = stdin.readline()
+
+    # Reading an array of integers
+    arr = [int(x) for x in stdin.readline().split()]
+
+    # Initialize variable
+    summation = 0
+
+    for x in arr:
+        summation += x
+
+    # Could have used inbuilt summation
+    # sum(arr) and that would have been
+    # faster
+
+    # Print answer via write
+    # write method writes only
+    # strings, so we need to cast any
+    # data into string before writing
+
+    stdout.write(str(summation))
+
+# call the main method
+if __name__ == "__main__":
+    main()
+</pre>
+                </font>
             </div>
         </div>
     </body>
