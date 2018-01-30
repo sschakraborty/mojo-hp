@@ -12,7 +12,13 @@
         <script src="/ace-editor/ext-language_tools.js"></script>
         <script src="/ace-editor/theme-xcode.js"></script>
 
-        <script src="/MathJax-master/MathJax.js"></script>
+        <script src="/MathJax-master/MathJax.js">
+            MathJax.Hub.Config({
+                extensions: ["tex2jax.js"],
+                jax: ["input/TeX","output/HTML-CSS"],
+                tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+            });
+        </script>
 
         <style type="text/css">
         </style>
@@ -34,11 +40,13 @@
                     }
 
                     var th = "";
+                    var updateArray = [];
                     data.rows.forEach(function(doc) {
                         var htm = "<div class='panel panel-warning'>";
                         htm += "<div class='panel-heading'><div class='panel-title'>" + atob(doc.name);
                         htm += " - (" + atob(doc.code) + ")</div></div>";
-                        htm += "<div class='panel-body'>" + atob(doc.question) + "</div>";
+                        htm += "<div class='panel-body' id='" + doc.code + "_q'>" + atob(doc.question) + "</div>";
+                        updateArray.push(["Typeset", MathJax.Hub, doc.code + "_q"]);
                         htm += "<div class='panel-footer text-right'><button class='btn btn-success'";
                         htm += " onclick='solveProblem(\"" + doc.code + "\");'>Solve This Problem</button></div>";
                         htm += "</div>";
@@ -46,7 +54,12 @@
                     });
 
                     $("#all_problems_panel").html(th);
-                    $("#panel_1").fadeIn(200);
+                    $("#panel_1").fadeIn(200, function() {
+                        updateArray.forEach(function(arr) {
+                            MathJax.Hub.Queue(arr);
+                            // console.log(JSON.stringify(arr));
+                        });
+                    });
                 }, "json");
             }
 
@@ -68,7 +81,9 @@
                         }
                     });
 
-                    $("#panel_2").fadeIn(200);
+                    $("#panel_2").fadeIn(200, function() {
+                        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "problem_question_id"]);
+                    });
                 }, "json");
             }
 
@@ -124,7 +139,7 @@
             });
         </script>
     </head>
-    <body class="container-fluid" style="padding: 25px;">
+    <body class="container-fluid no-mathjax" style="padding: 25px;">
 
         <div class="panel panel-primary" id="panel_1">
             <div class="panel-heading">
