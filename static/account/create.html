@@ -10,6 +10,8 @@
         <script type="text/javascript">
             $(document).ready(function() {
                 $("#make_acc_btn_id").on("click", function() {
+                    $("#message").text("Creating account please wait!");
+
                     var name = $.trim($("#name_id").val());
                     var email = $.trim($("#email_id").val());
                     var roll = $.trim($("#roll_id").val());
@@ -18,9 +20,9 @@
                     
                     $.post("/api/accounts", JSON.stringify({ "name": name, "email": email, "roll": roll, "phone_no": phno, "pwd": pwd }), function(data) {
                         if(data.msg === "success") {
-                            alert("done");
+                            location.href = "show.html";
                         } else {
-                            alert("error");
+                            $("#message").text("Some errors were encountered while creating account.");
                         }
                     }, "json");
                 });
@@ -30,6 +32,10 @@
     <body class="container" style="padding: 25px;">
         <div class="panel panel-primary">
             <div class="panel-body">
+                <div class="alert alert-danger" id="message">
+                    Welcome!
+                </div>
+
                 <label>Name</label>
                 <input type="text" value="" placeholder="#_Name" id="name_id" class="form-control" />
 

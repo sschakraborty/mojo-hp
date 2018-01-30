@@ -10,6 +10,7 @@
         <script type="text/javascript">
             $(document).ready(function() {
                 $("#login_acc_btn_id").on("click", function() {
+                    $("#message").text("Please wait while you're logged in.");
                     var email = $.trim($("#email_id").val());
                     var pwd = $.trim($("#pwd_id").val());
 
@@ -20,7 +21,7 @@
                             window.parent.switchNav();
                             window.parent.redirDashboard();
                         } else {
-                            alert("Could not log in!");
+                            $("#message").text("Could not log in | Invalid credentials.");
                         }
                     }, "json");
                 });
@@ -30,6 +31,10 @@
     <body class="container" style="padding: 25px;">
         <div class="panel panel-primary">
             <div class="panel-body">
+                <div class="alert alert-danger" id="message">
+                    Welcome!
+                </div>
+
                 <label>Email</label>
                 <input type="text" value="" placeholder="#_Email" id="email_id" class="form-control" />
 
