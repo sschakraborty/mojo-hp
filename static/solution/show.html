@@ -27,7 +27,13 @@
                             htm += "<td>" + atob(doc.problem_code) + "</td>";
                             htm += "<td>" + atob(doc.name) + "</td>";
                             htm += "<td>" + atob(doc.language) + "</td>";
-                            htm += "<td>" + doc.status + "</td>";
+
+                            if(doc.status === "ACC") {
+                                htm += "<td style='color: #006600'><b>" + doc.status + "</b></td>";
+                            } else {
+                                htm += "<td style='color: #7F0000'><b>" + doc.status + "</b></td>";
+                            }
+
                             htm += "<td><button class='btn btn-warning btn-block btn-sm' ";
                             htm += "onclick='openModal(\""+(doc.source_code)+"\");'>View Code</button></td></tr>";
                         });

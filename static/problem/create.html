@@ -12,6 +12,14 @@
         <script src="/ace-editor/ext-language_tools.js"></script>
         <script src="/ace-editor/theme-xcode.js"></script>
 
+        <script src="/MathJax-master/MathJax.js">
+            MathJax.Hub.Config({
+                extensions: ["tex2jax.js"],
+                jax: ["input/TeX","output/HTML-CSS"],
+                tex2jax: {inlineMath: [["$","$"],["\\(","\\)"]]}
+            });
+        </script>
+
         <script type="text/javascript">
             $(document).ready(function() {
                 ace.require("ace/ext/language_tools");
@@ -29,6 +37,11 @@
                     enableLiveAutocompletion: true
                 });
 
+                editor.session.on("change", function() {
+                    $("#preview_id").html(editor.getValue());
+                    MathJax.Hub.Queue(["Typeset", MathJax.Hub, "preview_id"]);
+                });
+
                 $("#create_problem_id").on("click", function() {
                     var code = $.trim($("#code_id").val());
                     var name = $.trim($("#name_id").val());
@@ -37,7 +50,7 @@
 
                     $.post("/api/problems", JSON.stringify({ "email": window.parent.getEmail(), "key": window.parent.getKey(), "name": name, "code": code, "question":question, "tags": tags }), function(data) {
                         if(data.msg === "success") {
-                            alert("done");
+                            location.href = "../dashboard/index.html";
                         } else {
                             alert("Could not create problem");
                         }
@@ -63,6 +76,12 @@
                 <pre id="question" style="width: 100%; height: 500px;"></pre>
 
                 <br>
+
+                <label>Preview</label>
+                <div class="panel panel-default">
+                    <div class="panel-body" id="preview_id"></div>
+                </div>
+
 
                 <label>Tags</label>
                 <input type="text" value="" placeholder="#_Tags" id="tags_id" class="form-control" />

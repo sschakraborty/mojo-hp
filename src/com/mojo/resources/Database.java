@@ -19,7 +19,8 @@ public class Database {
     
     public static void setVertxInstance(Vertx vertx) {
         JsonObject config = new JsonObject();
-        
+
+        config.put("debug", false);
         config.put("url", "jdbc:mysql://localhost:3306/mojo_hp_database");
         config.put("driver_class", "com.mysql.jdbc.Driver");
         config.put("user", "root");
