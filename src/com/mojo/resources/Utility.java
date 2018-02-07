@@ -5,6 +5,9 @@
 
 package com.mojo.resources;
 
+import io.vertx.core.json.JsonObject;
+
+import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
@@ -13,10 +16,37 @@ import java.util.Random;
 public class Utility {
     private static final String ERR_MSG = "{ \"msg\":\"error\" }";
     private static final String SCC_MSG = "{ \"msg\":\"success\" }";
-    private static final String SECRET_KEY = "FTgf29TgDFg^%$3$%^fcDFG";
+    private static String SECRET_KEY = "";
     private static final Random random = new Random();
 
-    private static final String JUDGE_FOLDER_PATH = "/home/sschakraborty/Documents/mojo-hp/Test";
+    private static String JUDGE_FOLDER_PATH = "";
+
+    static {
+        try {
+            FileInputStream fileInputStream = new FileInputStream("./config.json");
+            StringBuffer fileContent = new StringBuffer();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream));
+            String readContent;
+            while((readContent = reader.readLine()) != null) {
+                fileContent.append(readContent);
+            }
+            reader.close();
+            fileInputStream.close();
+
+            JsonObject config = new JsonObject(fileContent.toString());
+            SECRET_KEY = config.getJsonObject("security").getString("key");
+            JUDGE_FOLDER_PATH = config.getJsonObject("judge").getString("test_folder");
+        } catch(FileNotFoundException e) {
+            System.err.println("Config file not found");
+            System.exit(0);
+        } catch(IOException e) {
+            System.err.println("Config file IO error");
+            System.exit(0);
+        } catch(Exception e) {
+            System.err.println("Malformed config file");
+            System.exit(0);
+        }
+    }
     
     public static String encode(String s) {
         return new String(Base64.getEncoder().encode(s.getBytes()));

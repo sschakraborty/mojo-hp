@@ -21,7 +21,42 @@
         </script>
 
         <script type="text/javascript">
+            var testcases = [];
+            var problemCode;
+
+            function updateTCList() {
+                var html = "";
+                testcases.forEach(function(doc) {
+                    html += "<tr><td>" + doc.in_path + "</td>";
+                    html += "<td>" + doc.out_path + "</td>";
+                    html += "<td>" + doc.tl + "</td></tr>";
+                });
+                $("#test_table_body").html(html);
+            }
+
+            function insertTC() {
+                $("#exampleModal").modal("hide");
+                var doc = {
+                    "in_path": $("#in_path_id").val(),
+                    "out_path": $("#out_path_id").val(),
+                    "tl": $("#tl_id").val(),
+                    "email": window.parent.getEmail(),
+                    "key": window.parent.getKey(),
+                    "problem_code": problemCode
+                };
+                testcases.push(doc);
+                updateTCList();
+            }
+
             $(document).ready(function() {
+                $("#add_tc_btn_id").on("click", function() {
+                    insertTC();
+                });
+
+                $("#pop_tc_modal_id").on("click", function() {
+                    $("#exampleModal").modal("show");
+                });
+
                 ace.require("ace/ext/language_tools");
 
                 var editor = ace.edit("question");
@@ -42,6 +77,10 @@
                     MathJax.Hub.Queue(["Typeset", MathJax.Hub, "preview_id"]);
                 });
 
+                $("#code_id").on("change", function() {
+                    problemCode = $.trim($("#code_id").val());
+                });
+
                 $("#create_problem_id").on("click", function() {
                     var code = $.trim($("#code_id").val());
                     var name = $.trim($("#name_id").val());
@@ -50,13 +89,23 @@
 
                     $.post("/api/problems", JSON.stringify({ "email": window.parent.getEmail(), "key": window.parent.getKey(), "name": name, "code": code, "question":question, "tags": tags }), function(data) {
                         if(data.msg === "success") {
-                            location.href = "../dashboard/index.html";
+                            postTC();
                         } else {
                             alert("Could not create problem");
                         }
-                    });
+                    }, "json");
                 });
             });
+
+            function postTC() {
+                $.post("/api/problems/testcases", JSON.stringify(testcases), function(data) {
+                    if(data.msg == "success") {
+                        location.href = "../dashboard/index.html";
+                    } else {
+                        alert("Could not insert testcases. Insert them manually");
+                    }
+                }, "json");
+            }
         </script>
     </head>
     <body class="container" style="padding: 25px;">
@@ -82,6 +131,22 @@
                     <div class="panel-body" id="preview_id"></div>
                 </div>
 
+                <br>
+                <label>Testcases</label>
+                <button class="btn btn-sm btn-warning pull-right" id="pop_tc_modal_id">Add Testcase</button>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Input File Path</th>
+                            <th>Output File Path</th>
+                            <th>Time Limit</th>
+                        </tr>
+                    </thead>
+                    <tbody id="test_table_body">
+                    </tbody>
+                </table>
+
+                <br>
 
                 <label>Tags</label>
                 <input type="text" value="" placeholder="#_Tags" id="tags_id" class="form-control" />
@@ -91,5 +156,39 @@
                 <button id="create_problem_id" class="btn btn-success">Create Problem</button>
             </div>
         </div>
+
+
+
+
+        <!-- Modal Dialog Markup -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">New Testcase</h5>
+                    </div>
+                    <div class="modal-body">
+                        <label>Input File Path</label>
+                        <input type="text" id="in_path_id" class="form-control" />
+
+                        <br>
+
+                        <label>Output File Path</label>
+                        <input type="text" id="out_path_id" class="form-control" />
+
+                        <br>
+
+                        <label>Time Limit (ms)</label>
+                        <input type="number" min="100" id="tl_id" class="form-control" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" id="add_tc_btn_id">Add Testcase</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
     </body>
 </html>

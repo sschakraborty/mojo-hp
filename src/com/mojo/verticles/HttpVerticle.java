@@ -7,6 +7,7 @@ import com.mojo.handlers.leaderboard.GetProblemWiseHandler;
 import com.mojo.handlers.leaderboard.GetRankHandler;
 import com.mojo.handlers.problems.GetProblemsHandler;
 import com.mojo.handlers.problems.PostProblemsHandler;
+import com.mojo.handlers.problems.PostTestcaseHandler;
 import com.mojo.handlers.solutions.GetSolutionsHandler;
 import com.mojo.handlers.solutions.PostSolutionsHandler;
 import io.vertx.core.AbstractVerticle;
@@ -37,6 +38,7 @@ public class HttpVerticle extends AbstractVerticle {
 
         router.route(HttpMethod.POST, "/api/problems").handler(new PostProblemsHandler());
         router.route(HttpMethod.GET, "/api/problems").handler(new GetProblemsHandler());
+        router.route(HttpMethod.POST, "/api/problems/testcases").handler(new PostTestcaseHandler());
 
         // Solutions API
         // GET /api/submissions -> GET all submissions

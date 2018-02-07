@@ -1,0 +1,15 @@
+{
+    "database": {
+        "host": "localhost",
+        "port": 3306,
+        "db_name": "mojo_hp_database",
+        "username": "root",
+        "password": "2010ottawa"
+    },
+    "security": {
+        "key": "FTgf29TgDFg^%$3$%^fcDFG"
+    },
+    "judge": {
+        "test_folder": "/home/sschakraborty/Documents/mojo-hp/Test"
+    }
+}
