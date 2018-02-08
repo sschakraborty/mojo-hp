@@ -36,12 +36,11 @@
 
             function insertTC() {
                 $("#exampleModal").modal("hide");
+                problemCode = $.trim($("#code_id").val());
                 var doc = {
                     "in_path": $("#in_path_id").val(),
                     "out_path": $("#out_path_id").val(),
                     "tl": $("#tl_id").val(),
-                    "email": window.parent.getEmail(),
-                    "key": window.parent.getKey(),
                     "problem_code": problemCode
                 };
                 testcases.push(doc);
@@ -98,7 +97,7 @@
             });
 
             function postTC() {
-                $.post("/api/problems/testcases", JSON.stringify(testcases), function(data) {
+                $.post("/api/problems/testcases", JSON.stringify({ "email": window.parent.getEmail(), "key": window.parent.getKey(), "TC": testcases }), function(data) {
                     if(data.msg == "success") {
                         location.href = "../dashboard/index.html";
                     } else {

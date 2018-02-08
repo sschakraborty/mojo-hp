@@ -15,22 +15,23 @@ public class PostTestcaseHandler implements Handler<RoutingContext> {
     public void handle(RoutingContext context) {
         context.response().putHeader("Content-type", "application/json");
 
-        StringBuilder query = new StringBuilder();
-        query.append("insert into Testcases (Problems_code, in_path, out_path, tl) values ");
-        JsonArray array = context.getBodyAsJsonArray();
+        JsonObject body = context.getBodyAsJson();
+        String email = body.getString("email");
+        String key = body.getString("key");
 
-        Iterator iterator = array.iterator();
-        while(iterator.hasNext()) {
-            JsonObject obj = (JsonObject) iterator.next();
-            String problemCode = obj.getString("problem_code");
-            String in_path = obj.getString("in_path");
-            String out_path = obj.getString("out_path");
-            String tl = obj.getString("tl");
-            String email = obj.getString("email");
-            String key = obj.getString("key");
+        if(email != null && key != null && Utility.encrypt(email).equals(key)) {
+            JsonArray array = body.getJsonArray("TC");
+            StringBuilder query = new StringBuilder();
+            query.append("insert into Testcases (Problems_code, in_path, out_path, tl) values ");
 
-            if(key != null && email != null && key.equals(Utility.encrypt(email))) {
-                if(problemCode != null && in_path != null && out_path != null && tl != null) {
+            Iterator iterator = array.iterator();
+            while (iterator.hasNext()) {
+                JsonObject obj = (JsonObject) iterator.next();
+                String problemCode = obj.getString("problem_code");
+                String in_path = obj.getString("in_path");
+                String out_path = obj.getString("out_path");
+                String tl = obj.getString("tl");
+                if (problemCode != null && in_path != null && out_path != null && tl != null) {
                     problemCode = Utility.encode(problemCode);
 
                     query.append("(\"").append(problemCode).append("\", ");
@@ -39,24 +40,27 @@ public class PostTestcaseHandler implements Handler<RoutingContext> {
                     query.append(tl).append("),");
                 }
             }
-        };
+            ;
 
-        query.setCharAt(query.length() -1 , ';');
+            query.setCharAt(query.length() - 1, ';');
 
-        Database.getClient().getConnection(conn -> {
-            if(conn.succeeded()) {
-                SQLConnection connection = conn.result();
+            Database.getClient().getConnection(conn -> {
+                if (conn.succeeded()) {
+                    SQLConnection connection = conn.result();
 
-                connection.query(query.toString(), res -> {
-                    if(res.succeeded()) {
-                        context.response().end(Utility.getSuccessMsg());
-                    } else {
-                        context.response().end(Utility.getErrorMsg());
-                    }
-                });
-            } else {
-                context.response().end(Utility.getErrorMsg());
-            }
-        });
+                    connection.query(query.toString(), res -> {
+                        if (res.succeeded()) {
+                            context.response().end(Utility.getSuccessMsg());
+                        } else {
+                            context.response().end(Utility.getErrorMsg());
+                        }
+                    });
+                } else {
+                    context.response().end(Utility.getErrorMsg());
+                }
+            });
+        } else {
+            context.response().end(Utility.getErrorMsg());
+        }
     }
 }
