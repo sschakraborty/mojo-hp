@@ -55,6 +55,8 @@ public class PostTestcaseHandler implements Handler<RoutingContext> {
                             context.response().end(Utility.getErrorMsg());
                         }
                     });
+
+                    connection.close();
                 } else {
                     context.response().end(Utility.getErrorMsg());
                 }
