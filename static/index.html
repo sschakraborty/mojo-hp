@@ -104,6 +104,10 @@
                 $("#about_mojo_id_2").on("click", function() {
                     $("#frame").attr("src", "/about.html");
                 });
+
+                $("#profile_id").on("click", function() {
+                    $("#frame").attr("src", "/account/update.html");
+                });
             });
         </script>
     </head>
@@ -125,7 +129,7 @@
                         <li><a href="#AllProblems" id="all_problems_id">All Problems</a></li>
                         <li><a href="#MySubmissions" id="my_submissions_id">My Submissions</a></li>
                         <li><a href="#Leaderboard"id="leaderboard_id">Leaderboard</a></li>
-                        <li><a href="#MyProfile">My Profile</a></li>
+                        <li><a href="#MyProfile" id="profile_id">My Profile</a></li>
                         <li><a href="#CreateProblem" id="create_problem_id">Create Problem</a></li>
                         <li><a href="#About" class="about_class" id="about_mojo_id_2">About MOJO</a></li>
                         <li><a href="#LogOut" id="log_out_id">Log Out</a></li>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Account List</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+        <script type="text/javascript" src="/js/jquery.min.js"></script>
+        <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $.get("/api/accounts", JSON.stringify({ "email": window.parent.getEmail() }), function(data) {
+                    data.rows.forEach(function(doc) {
+                        $("#name_id").val(atob(doc.name));
+                        $("#email_id").text(atob(doc.email));
+                        $("#roll_id").val(atob(doc.roll));
+                        $("#phone_no_id").val(atob(doc.phone_no));
+                    });
+
+                    $("body").fadeIn(250);
+                }, "json");
+
+
+                $("#update_btn_id").on("click", function() {
+                    $.post("/api/accounts/update", JSON.stringify({ "email": window.parent.getEmail(),
+                                                            "key": window.parent.getKey(),
+                                                            "name": $.trim($("#name_id").val()),
+                                                            "roll": $.trim($("#roll_id").val()),
+                                                            "phone_no": $.trim($("#phone_no_id").val())
+                     }), function(data) {
+                        if(data.msg == "success") {
+                            location.href = "../dashboard/index.html";
+                        } else {
+                            alert("Could not update account");
+                        }
+                    }, "json");
+                });
+            });
+        </script>
+    </head>
+    <body class="container" style="padding: 25px; display: none;">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <div class="panel-title">
+                    Update Account
+                </div>
+            </div>
+
+            <div class="panel-body">
+                <label>Name</label>
+                <input type="text" class="form-control" id="name_id" />
+
+                <br>
+
+                <label>Email</label><br>
+                <code><span id="email_id"></span></code>
+
+                <br><br>
+
+                <label>Roll Number</label>
+                <input type="text" class="form-control" id="roll_id" />
+
+                <br>
+
+                <label>Phone Number</label>
+                <input type="number" class="form-control" id="phone_no_id" />
+
+                <div class="row" style="margin-top: 25px;">
+                    <div class="col-xs-4"></div>
+                    <div class="col-xs-4">
+                        <button class="btn btn-success btn-block" id="update_btn_id">UPDATE PROFILE</button>
+                    </div>
+                    <div class="col-xs-4"></div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

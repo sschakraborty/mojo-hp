@@ -3,6 +3,7 @@ package com.mojo.verticles;
 import com.mojo.handlers.accounts.GetAccountHandler;
 import com.mojo.handlers.accounts.LoginHandler;
 import com.mojo.handlers.accounts.PostAccountHandler;
+import com.mojo.handlers.accounts.PutAccountHandler;
 import com.mojo.handlers.leaderboard.GetProblemWiseHandler;
 import com.mojo.handlers.leaderboard.GetRankHandler;
 import com.mojo.handlers.problems.GetProblemsHandler;
@@ -30,6 +31,7 @@ public class HttpVerticle extends AbstractVerticle {
         
         router.route(HttpMethod.POST, "/api/accounts").handler(new PostAccountHandler());
         router.route(HttpMethod.GET, "/api/accounts").handler(new GetAccountHandler());
+        router.route(HttpMethod.POST, "/api/accounts/update").handler(new PutAccountHandler());
         router.route(HttpMethod.POST, "/api/accounts/login").handler(new LoginHandler());
 
         // Problems API

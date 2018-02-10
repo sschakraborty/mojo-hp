@@ -15,18 +15,18 @@ public class GetAccountHandler implements Handler<RoutingContext> {
     public void handle(RoutingContext context) {
         context.response().putHeader("Content-type", "application/json");
         
-        String id = context.request().getParam("id");
+        String email = context.request().getParam("email");
         
         StringBuilder sql = new StringBuilder();
         
         sql.append("select name, email, roll, phone_no from Accounts");
         
-        if(id != null) {
-            id = id.trim();
+        if(email != null) {
+            email = email.trim();
         }
         
-        if(id != null && id.length() > 0) {
-            sql.append(" where id = \"").append(id).append("\"");
+        if(email != null && email.length() > 0) {
+            sql.append(" where email = \"").append(email).append("\"");
         }
         
         sql.append(" limit 250;");
