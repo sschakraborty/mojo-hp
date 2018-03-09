@@ -15,12 +15,19 @@ import java.io.*;
 public class Database {
     private static SQLClient client;
     private static final JsonObject dbc = new JsonObject();
+    private static String configPath;
 
     static {
         client = null;
 
         try {
-            FileInputStream fileInputStream = new FileInputStream("./config.json");
+            // Make IO to get the path for a valid config file
+            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+            System.out.print("[Config file path]: ");
+            configPath = in.readLine();
+            in.close();
+
+            FileInputStream fileInputStream = new FileInputStream(configPath);
             StringBuffer fileContent = new StringBuffer();
             BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream));
             String readContent;
@@ -47,6 +54,7 @@ public class Database {
             System.exit(0);
         } catch(Exception e) {
             System.err.println("Malformed config file");
+            System.err.println(e.getMessage());
             System.exit(0);
         }
     }
