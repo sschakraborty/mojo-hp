@@ -42,8 +42,8 @@ DEFINE_PROTO(run_py3);
 DEFINE_PROTO(run_ruby);
 
 char* gen_temp_name();
-char* run_native_compiled(char** argv, uint32_t cpu_time, char* src, char* test_in, char* out); 
-char* run_interpreted(char** argv, char** compile, uint32_t cpu_time, char* src, char* test_in, char* out); 
+char* run_native_compiled(char** argv, uint32_t cpu_time, char* src, char* test_in, char* out);
+char* run_interpreted(char** argv, char** compile, uint32_t cpu_time, char* src, char* test_in, char* out);
 void show_help(char* program);
 
 uint32_t PAGE_SIZE;
@@ -365,7 +365,7 @@ char* run_native_compiled(char** args, uint32_t cpu, char* src, char* input, cha
 char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* input, char* output)
 {
     int in[2], fd[2];
-    
+
     if (compile_flags)
     {
         if (-1 == pipe(fd))
@@ -374,7 +374,7 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
             fflush(stderr);
             return NULL;
         }
-        
+
         pid_t pid = fork();
         if (pid == 0)
         {
@@ -389,7 +389,7 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
             int status;
             close(fd[1]);
             waitpid(pid, &status, 0);
-            
+
             char buffer[1024];
             int n;
             n = read(fd[0], buffer, sizeof(buffer));
@@ -401,14 +401,14 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
             }
         }
     }
-    
+
     if (-1 == pipe(in) && -1 == pipe(fd))
     {
         fprintf(stderr, "[ERROR] Pipe Failed\n");
         fflush(stderr);
         return NULL;
     }
-    
+
     int file = open(input, 0);
     if (file == -1)
     {
@@ -416,7 +416,7 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
         fflush(stderr);
         return NULL;
     }
-    
+
     pid_t pid = fork();
     if (pid == 0)
     {
@@ -425,7 +425,7 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
         dup2(file, 0);
         dup2(in[1], 1);
         dup2(fd[1], 2);
-        
+
         struct rlimit lim;
         lim.rlim_cur = lim.rlim_max = cpu;
         if (-1 == prlimit(getpid(), RLIMIT_CPU, &lim, NULL)) {
@@ -438,10 +438,10 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
     {
         close(fd[1]);
         close(in[1]);
-        
+
         int ret, status;
         uint64_t mem = 0;
-        
+
         do
         {
             ret = waitpid(pid, &status, WNOHANG|WUNTRACED);
@@ -449,13 +449,13 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
                 break;
             mem = MAX(mem, get_vm_size(pid));
         } while (!ret && mem <= MAX_MEM);
-        
+
         if (mem > MAX_MEM)
         {
             close(in[0]);
             return "MLE";
         }
-        
+
         if (ret == -1)
         {
             close(in[0]);
@@ -463,7 +463,7 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
             fflush(stderr);
             return NULL;
         }
-        
+
         if (WIFEXITED(status))
         {
             char* error_text = 0;
@@ -477,39 +477,39 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
                     asprintf(&error_text, "%.*s", count, temp_buffer);
             }
             close(fd[0]);
-            
+
             char error_expression[] = "^(.*Error)";
             regex_t reg;
             regmatch_t match;
             printf("[ERROR_INFO]$ %s\n", error_text);
-            
+
             if (regcomp(&reg, error_expression, REG_EXTENDED|REG_NEWLINE))
             {
                 printf("[ERROR] regcomp");
                 return NULL;
             }
-            
+
             if (regexec(&reg, error_text, 1, &match, 0) == 0)
             {
                 int start = match.rm_so, end = match.rm_eo;
                 regfree(&reg);
-                
+
                 printf("[INFO] Match : %.*s\n", end-start, error_text+start);
                 if (strncmp("Syntax", error_text+start, 6) == 0)
                     return "CERR";
                 else
                     return "RTE";
             }
-            
+
             regfree(&reg);
-            
+
             if (pipe(fd) == -1)
             {
                 fprintf(stderr, "[ERROR] Pipe failed\n");
                 fflush(stdout);
                 return NULL;
             }
-            
+
             pid_t pid = fork();
             if (pid == 0)
             {
@@ -642,7 +642,7 @@ char* run_interpreted(char** args, char** compile_flags, uint32_t cpu, char* src
 		}
 
 		if (WIFEXITED(status))
-		{            
+		{
 			if (pipe(fd) == -1)
 			{
 				fprintf(stderr, "[ERROR] Pipe failed\n");
@@ -1034,13 +1034,13 @@ char* run_ruby(uint32_t cpu, char* src, char* input, char* output)
 }
 
 __attribute__((noreturn))
-void show_help(char* prog) 
+void show_help(char* prog)
 {
 	printf(
 			"Usage : %s [options]\n"
 			"\t--path, -p\t: Path of source file\n"
 			"\t--input, -i\t: Path of test case\n"
-			"\t--output, -i\t: Path of correct answer\n"
+			"\t--output, -o\t: Path of correct answer\n"
 			"\t--lang, -l\t: Language of source code\n"
 			"\t--cpu, -n\t: Time Limit (in seconds)\n"
 			"\n\t--help, -h\t: Show this message\n",
