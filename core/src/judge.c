@@ -174,28 +174,65 @@ char* gen_temp_name()
 
 
 /*
- * Return virtual memory size of process
+ * Return memory used by the process
+ * text+data+stack
  */
+
+uint64_t parse_int(char* string, off_t* off)
+{
+    uint64_t ans = 0;
+    off64_t pos = *off;
+    while (! isdigit(string[pos]))
+        ++pos;
+    while (isdigit(string[pos]))
+        ans = ans*10+string[pos++]-0x30;
+    *off = pos;
+    return ans;
+}
 
 uint64_t get_vm_size(pid_t pid)
 {
     char* path = NULL;
-    asprintf(&path, "/proc/%d/statm", pid);
+    asprintf(&path, "/proc/%d/stat", pid);
 
     int fd = open(path, 0);
-    free(path);
-
-    char buffer[128];
-    int count = read(fd, buffer, sizeof(buffer));
-    if (count <= 0)
+    if (fd == -1)
         return 0;
+    
+    static char buffer[512];
+    memset(buffer, 0, sizeof buffer);
 
-    long ans;
-    buffer[count-1] = 0;
-    sscanf(buffer, "%ld", &ans);
+    int n_bytes = read(fd, buffer, sizeof buffer);
+    off_t offset = 0;
 
-    close(fd);
-    return PAGE_SIZE*ans;
+    // Skip 25 spaces
+    int count = 25;
+    while (count) {
+        if(isspace(buffer[offset++]))
+            count--;
+    }
+
+    uint64_t code_start, code_end, stack_start;
+    uint64_t data_start, data_end, brk, argv_start;
+
+    code_start = parse_int(buffer, &offset);
+    code_end = parse_int(buffer, &offset);
+    stack_start = parse_int(buffer, &offset);
+    // fscanf(file, "%lu %lu %lu", &code_start, &code_end, &stack_start);
+    count = 17;
+    while (count) {
+        if(isspace(buffer[offset++]))
+            count--;
+    }
+
+    data_start = parse_int(buffer, &offset);
+    data_end = parse_int(buffer, &offset);
+    brk = parse_int(buffer, &offset);
+    argv_start = parse_int(buffer, &offset);
+    //fscanf(file, "%lu %lu %lu %lu", &data_start, &data_end, &brk, &argv_start);
+
+    uint64_t ans = code_end-code_start+data_end-data_start+brk-data_end+argv_start-stack_start;
+    return ans;
 }
 
 
@@ -265,6 +302,8 @@ char* run_native_compiled(char** args, uint32_t cpu, char* src, char* input, cha
         return NULL;
     }
 
+    puts("[INFO] Compiled Successfully !");
+
     pid = fork();
     if (! pid)
     {
@@ -293,23 +332,24 @@ char* run_native_compiled(char** args, uint32_t cpu, char* src, char* input, cha
         close(fd[1]);
         close(test_case_fd);
 
-        uint64_t mem_size;
+        uint64_t mem_size = 0;
         int ret;
         do
         {
             ret = waitpid(pid, &status, WNOHANG|WUNTRACED);
-            mem_size = get_vm_size(pid);
+            mem_size = MAX(mem_size, get_vm_size(pid));
+            dprintf(1, "[MEM] %lu KiB\n", mem_size>>10);
         }
         while (!ret && mem_size <= MAX_MEM);
+
+        printf("[INFO] Memory Consumed : %lu KiB\n", mem_size >> 10);
+        remove(bin);
 
         if (mem_size > MAX_MEM)
         {
             close(fd[0]);
-            remove(bin);
             return "MLE";
         }
-
-        remove(bin);
 
         if (WIFEXITED(status))
         {
