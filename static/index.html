@@ -53,7 +53,7 @@
 
             function setKey(k) {
                 authKey = k;
-                setCookie("authKey", authKey, 4);
+                setCookie("authKey", btoa(authKey), 4);
             }
 
             function getKey() {
@@ -62,7 +62,7 @@
 
             function setEmail(k) {
                 email = k;
-                setCookie("email", email, 4);
+                setCookie("email", btoa(email), 4);
             }
 
             function getEmail() {
@@ -134,8 +134,8 @@
                 });
 
                 if(getCookie("email") != "" && getCookie("authKey") != "") {
-                    email = getCookie("email");
-                    authKey = getCookie("authKey");
+                    email = atob(getCookie("email"));
+                    authKey = atob(getCookie("authKey"));
                     switchNav();
                     redirDashboard();
                 } else {
