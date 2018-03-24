@@ -28,8 +28,32 @@
             var email = "";
             var authKey = "";
 
+            function setCookie(cname, cvalue, exdays) {
+                var d = new Date();
+                d.setTime(d.getTime() + (exdays*24*60*60*1000));
+                var expires = "expires="+ d.toUTCString();
+                document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+            }
+
+            function getCookie(cname) {
+                var name = cname + "=";
+                var decodedCookie = decodeURIComponent(document.cookie);
+                var ca = decodedCookie.split(';');
+                for(var i = 0; i <ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') {
+                        c = c.substring(1);
+                    }
+                    if(c.indexOf(name) == 0) {
+                        return c.substring(name.length, c.length);
+                    }
+                }
+                return "";
+            }
+
             function setKey(k) {
                 authKey = k;
+                setCookie("authKey", authKey, 4);
             }
 
             function getKey() {
@@ -38,6 +62,7 @@
 
             function setEmail(k) {
                 email = k;
+                setCookie("email", email, 4);
             }
 
             function getEmail() {
@@ -84,7 +109,6 @@
                     switchNav();
                 });
 
-                $("#frame").attr("src", "account/login.html");
                 $("#create_problem_id").on("click", function() {
                     $("#frame").attr("src", "problem/create.html");
                 });
@@ -108,6 +132,15 @@
                 $("#profile_id").on("click", function() {
                     $("#frame").attr("src", "/account/update.html");
                 });
+
+                if(getCookie("email") != "" && getCookie("authKey") != "") {
+                    email = getCookie("email");
+                    authKey = getCookie("authKey");
+                    switchNav();
+                    redirDashboard();
+                } else {
+                    $("#frame").attr("src", "account/login.html");
+                }
             });
         </script>
     </head>

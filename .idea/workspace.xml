@@ -8,6 +8,7 @@
   <component name="ChangeListManager">
     <list default="true" id="0b360a93-030e-46aa-80a8-8976173373c8" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/static/index.html" afterPath="$PROJECT_DIR$/static/index.html" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -64,13 +65,13 @@
         <option value="$PROJECT_DIR$/src/com/mojo/resources/Utility.java" />
         <option value="$PROJECT_DIR$/src/com/mojo/handlers/accounts/GetAccountHandler.java" />
         <option value="$PROJECT_DIR$/src/com/mojo/handlers/accounts/PutAccountHandler.java" />
-        <option value="$PROJECT_DIR$/static/index.html" />
         <option value="$PROJECT_DIR$/src/com/mojo/verticles/HttpVerticle.java" />
         <option value="$PROJECT_DIR$/static/account/update.html" />
         <option value="$PROJECT_DIR$/src/com/mojo/Main.java" />
         <option value="$PROJECT_DIR$/src/com/mojo/resources/Database.java" />
         <option value="$PROJECT_DIR$/src/com/mojo/handlers/problems/PostTestcaseHandler.java" />
         <option value="$PROJECT_DIR$/static/problem/create.html" />
+        <option value="$PROJECT_DIR$/static/index.html" />
       </list>
     </option>
   </component>
@@ -110,41 +111,13 @@
             <path>
               <item name="mojo-hp" type="b2602c69:ProjectViewProjectNode" />
               <item name="mojo-hp" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="mojo" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mojo-hp" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mojo-hp" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="mojo" type="462c0819:PsiDirectoryNode" />
-              <item name="handlers" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mojo-hp" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mojo-hp" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="mojo" type="462c0819:PsiDirectoryNode" />
-              <item name="handlers" type="462c0819:PsiDirectoryNode" />
-              <item name="problems" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mojo-hp" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mojo-hp" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="mojo" type="462c0819:PsiDirectoryNode" />
-              <item name="verticles" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mojo-hp" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mojo-hp" type="462c0819:PsiDirectoryNode" />
               <item name="static" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="mojo-hp" type="b2602c69:ProjectViewProjectNode" />
               <item name="mojo-hp" type="462c0819:PsiDirectoryNode" />
               <item name="static" type="462c0819:PsiDirectoryNode" />
-              <item name="problem" type="462c0819:PsiDirectoryNode" />
+              <item name="account" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -330,7 +303,7 @@
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32781458" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32781458" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32781458" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3294702" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3410596" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -507,25 +480,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/static/account/login.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
-          <caret line="12" column="78" lean-forward="true" selection-start-line="12" selection-start-column="78" selection-end-line="12" selection-end-column="78" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/static/mathjax-master/jax/input/TeX/jax.js" />
     <entry file="file://$PROJECT_DIR$/static/solution/show.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
           <caret line="33" column="94" lean-forward="false" selection-start-line="33" selection-start-column="94" selection-end-line="33" selection-end-column="94" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/dashboard/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="325">
-          <caret line="20" column="17" lean-forward="false" selection-start-line="14" selection-start-column="8" selection-end-line="20" selection-end-column="17" />
         </state>
       </provider>
     </entry>
@@ -547,13 +506,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="816">
           <caret line="54" column="47" lean-forward="false" selection-start-line="54" selection-start-column="47" selection-end-line="54" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="108" column="60" lean-forward="false" selection-start-line="108" selection-start-column="60" selection-end-line="108" selection-end-column="60" />
         </state>
       </provider>
     </entry>
@@ -629,14 +581,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/mojo/handlers/problems/PostTestcaseHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="17" column="50" lean-forward="false" selection-start-line="17" selection-start-column="50" selection-end-line="17" selection-end-column="50" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/mojo/verticles/HttpVerticle.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-278">
@@ -645,10 +589,42 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/mojo/handlers/problems/PostTestcaseHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-437">
+          <caret line="17" column="50" lean-forward="false" selection-start-line="17" selection-start-column="50" selection-end-line="17" selection-end-column="50" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/static/problem/create.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
+        <state relative-caret-position="-714">
           <caret line="111" column="27" lean-forward="true" selection-start-line="111" selection-start-column="27" selection-end-line="111" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/dashboard/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1630">
+          <caret line="31" column="13" lean-forward="true" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/account/login.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="12" column="78" lean-forward="false" selection-start-line="12" selection-start-column="78" selection-end-line="12" selection-end-column="78" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="742">
+          <caret line="138" column="32" lean-forward="false" selection-start-line="138" selection-start-column="32" selection-end-line="138" selection-end-column="32" />
           <folding />
         </state>
       </provider>
