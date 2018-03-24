@@ -97,6 +97,12 @@
             });
 
             function postTC() {
+                // Make the testcases array ready
+
+                $.each(testcases, function(index, doc) {
+                    testcases[index].problem_code = $.trim($("#code_id").val());
+                });
+
                 $.post("/api/problems/testcases", JSON.stringify({ "email": window.parent.getEmail(), "key": window.parent.getKey(), "TC": testcases }), function(data) {
                     if(data.msg == "success") {
                         location.href = "../dashboard/index.html";
