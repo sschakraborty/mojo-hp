@@ -39,3 +39,15 @@ create table if not exists Solve_log (
     constraint fk_Accounts_id foreign key (Accounts_id) references Accounts (id)
     on update cascade on delete cascade
 ) engine = InnoDB;
+
+create table if not exists Comments (
+    id integer unsigned primary key auto_increment,
+    Problems_code varchar(25) not null,
+    Accounts_id integer unsigned not null,
+    comment varchar(1024) not null,
+    c_time timestamp not null default current_timestamp,
+    constraint fk_code_3 foreign key (Problems_code) references Problems (code)
+    on update cascade on delete cascade,
+    constraint fk_Accounts_id_2 foreign key (Accounts_id) references Accounts (id)
+    on update cascade on delete cascade
+) engine = InnoDB;
