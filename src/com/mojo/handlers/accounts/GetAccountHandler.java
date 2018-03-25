@@ -3,12 +3,9 @@ package com.mojo.handlers.accounts;
 import com.mojo.resources.Database;
 import com.mojo.resources.Utility;
 import io.vertx.core.Handler;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.sql.ResultSet;
 import io.vertx.ext.sql.SQLConnection;
 import io.vertx.ext.web.RoutingContext;
-import java.util.List;
 
 public class GetAccountHandler implements Handler<RoutingContext> {
     @Override
@@ -26,7 +23,7 @@ public class GetAccountHandler implements Handler<RoutingContext> {
         }
         
         if(email != null && email.length() > 0) {
-            sql.append(" where email = \"").append(email).append("\"");
+            sql.append(" where email = \"").append(Utility.encode(email)).append("\"");
         }
         
         sql.append(" limit 250;");

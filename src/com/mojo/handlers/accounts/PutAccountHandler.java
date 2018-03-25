@@ -27,7 +27,8 @@ public class PutAccountHandler implements Handler<RoutingContext> {
             final StringBuilder query = new StringBuilder();
             query.append("update Accounts set name = \"").append(name).append("\", ");
             query.append("roll = \"").append(roll).append("\", ");
-            query.append("phone_no = \"").append(phone_no).append("\";");
+            query.append("phone_no = \"").append(phone_no).append("\" where email = \"");
+            query.append(Utility.encode(email)).append("\";");
 
             if(Utility.encrypt(email).equals(key)) {
                 Database.getClient().getConnection(conn -> {

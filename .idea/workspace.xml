@@ -7,12 +7,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0b360a93-030e-46aa-80a8-8976173373c8" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/com/mojo/handlers/comments/GetCommentsHandler.java" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/com/mojo/handlers/comments/PostCommentsHandler.java" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/verticles/HttpVerticle.class" afterPath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/verticles/HttpVerticle.class" />
-      <change beforePath="$PROJECT_DIR$/src/com/mojo/verticles/HttpVerticle.java" afterPath="$PROJECT_DIR$/src/com/mojo/verticles/HttpVerticle.java" />
+      <change beforePath="$PROJECT_DIR$/out/artifacts/mojo_hp_jar/mojo-hp.jar" afterPath="$PROJECT_DIR$/out/artifacts/mojo_hp_jar/mojo-hp.jar" />
+      <change beforePath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/handlers/accounts/GetAccountHandler.class" afterPath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/handlers/accounts/GetAccountHandler.class" />
+      <change beforePath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/handlers/accounts/PutAccountHandler.class" afterPath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/handlers/accounts/PutAccountHandler.class" />
+      <change beforePath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/handlers/comments/PostCommentsHandler.class" afterPath="$PROJECT_DIR$/out/production/mojo-hp/com/mojo/handlers/comments/PostCommentsHandler.class" />
+      <change beforePath="$PROJECT_DIR$/src/com/mojo/handlers/accounts/GetAccountHandler.java" afterPath="$PROJECT_DIR$/src/com/mojo/handlers/accounts/GetAccountHandler.java" />
+      <change beforePath="$PROJECT_DIR$/src/com/mojo/handlers/accounts/PutAccountHandler.java" afterPath="$PROJECT_DIR$/src/com/mojo/handlers/accounts/PutAccountHandler.java" />
+      <change beforePath="$PROJECT_DIR$/src/com/mojo/handlers/comments/PostCommentsHandler.java" afterPath="$PROJECT_DIR$/src/com/mojo/handlers/comments/PostCommentsHandler.java" />
+      <change beforePath="$PROJECT_DIR$/static/account/update.html" afterPath="$PROJECT_DIR$/static/account/update.html" />
       <change beforePath="$PROJECT_DIR$/static/dashboard/index.html" afterPath="$PROJECT_DIR$/static/dashboard/index.html" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -24,7 +27,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+    <leaf />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -66,9 +69,6 @@
         <option value="$PROJECT_DIR$/static/account/login.html" />
         <option value="$PROJECT_DIR$/static/solution/show.html" />
         <option value="$PROJECT_DIR$/src/com/mojo/resources/Utility.java" />
-        <option value="$PROJECT_DIR$/src/com/mojo/handlers/accounts/GetAccountHandler.java" />
-        <option value="$PROJECT_DIR$/src/com/mojo/handlers/accounts/PutAccountHandler.java" />
-        <option value="$PROJECT_DIR$/static/account/update.html" />
         <option value="$PROJECT_DIR$/src/com/mojo/Main.java" />
         <option value="$PROJECT_DIR$/src/com/mojo/resources/Database.java" />
         <option value="$PROJECT_DIR$/src/com/mojo/handlers/problems/PostTestcaseHandler.java" />
@@ -76,9 +76,12 @@
         <option value="$PROJECT_DIR$/static/index.html" />
         <option value="$PROJECT_DIR$/mojo-hp.sql" />
         <option value="$PROJECT_DIR$/src/com/mojo/verticles/HttpVerticle.java" />
-        <option value="$PROJECT_DIR$/src/com/mojo/handlers/comments/PostCommentsHandler.java" />
         <option value="$PROJECT_DIR$/src/com/mojo/handlers/comments/GetCommentsHandler.java" />
+        <option value="$PROJECT_DIR$/src/com/mojo/handlers/accounts/PutAccountHandler.java" />
+        <option value="$PROJECT_DIR$/src/com/mojo/handlers/accounts/GetAccountHandler.java" />
+        <option value="$PROJECT_DIR$/static/account/update.html" />
         <option value="$PROJECT_DIR$/static/dashboard/index.html" />
+        <option value="$PROJECT_DIR$/src/com/mojo/handlers/comments/PostCommentsHandler.java" />
       </list>
     </option>
   </component>
@@ -109,10 +112,10 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="AndroidView" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -151,22 +154,7 @@
               <item name="mojo-hp" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="mojo" type="462c0819:PsiDirectoryNode" />
-              <item name="handlers" type="462c0819:PsiDirectoryNode" />
-              <item name="problems" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mojo-hp" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mojo-hp" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="mojo" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="mojo-hp" type="b2602c69:ProjectViewProjectNode" />
-              <item name="mojo-hp" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="mojo" type="462c0819:PsiDirectoryNode" />
-              <item name="verticles" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="mojo-hp" type="b2602c69:ProjectViewProjectNode" />
@@ -372,11 +360,11 @@
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3294702" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32781458" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3294702" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3410596" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="FAQ Robot" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3060606" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31136364" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -427,9 +415,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1649">
           <caret line="97" column="45" lean-forward="false" selection-start-line="97" selection-start-column="45" selection-end-line="97" selection-end-column="45" />
-          <folding>
-            <element signature="n#style#0;n#div#2;n#div#2;n#div#1;n#body#0;n#html#0;n#!!top" expanded="false" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -572,34 +558,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/mojo/handlers/accounts/GetAccountHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-187">
-          <caret line="27" column="33" lean-forward="false" selection-start-line="27" selection-start-column="33" selection-end-line="27" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/account/show.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="33" column="11" lean-forward="true" selection-start-line="33" selection-start-column="11" selection-end-line="33" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/mojo/handlers/accounts/PutAccountHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="561">
-          <caret line="38" column="80" lean-forward="true" selection-start-line="38" selection-start-column="80" selection-end-line="38" selection-end-column="80" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/static/account/update.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="31" column="58" lean-forward="false" selection-start-line="31" selection-start-column="58" selection-end-line="31" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/mojo/resources/Database.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="323">
@@ -663,13 +621,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/static/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="172">
-          <caret line="137" column="57" lean-forward="true" selection-start-line="137" selection-start-column="57" selection-end-line="137" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/mojo-hp.sql">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
@@ -685,26 +636,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/mojo/verticles/HttpVerticle.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="65" column="88" lean-forward="true" selection-start-line="65" selection-start-column="88" selection-end-line="65" selection-end-column="88" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/mojo/handlers/problems/GetProblemsHandler.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="544">
           <caret line="38" column="39" lean-forward="true" selection-start-line="38" selection-start-column="39" selection-end-line="38" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/com/mojo/handlers/comments/PostCommentsHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="27" column="57" lean-forward="false" selection-start-line="27" selection-start-column="57" selection-end-line="27" selection-end-column="57" />
           <folding />
         </state>
       </provider>
@@ -719,16 +654,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/static/dashboard/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="215">
-          <caret line="100" column="85" lean-forward="false" selection-start-line="100" selection-start-column="85" selection-end-line="100" selection-end-column="85" />
-          <folding>
-            <element signature="n#style#0;n#div#2;n#div#2;n#div#1;n#body#0;n#html#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/com/mojo/handlers/comments/GetCommentsHandler.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-289">
@@ -736,6 +661,74 @@
           <folding>
             <element signature="imports" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-185">
+          <caret line="137" column="57" lean-forward="true" selection-start-line="137" selection-start-column="57" selection-end-line="137" selection-end-column="57" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/account/show.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="33" column="11" lean-forward="true" selection-start-line="33" selection-start-column="11" selection-end-line="33" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/mojo/handlers/accounts/PutAccountHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="30" column="62" lean-forward="false" selection-start-line="30" selection-start-column="62" selection-end-line="30" selection-end-column="62" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/mojo/handlers/accounts/GetAccountHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="476">
+          <caret line="28" column="34" lean-forward="false" selection-start-line="28" selection-start-column="34" selection-end-line="28" selection-end-column="34" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/account/update.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="11" column="94" lean-forward="false" selection-start-line="11" selection-start-column="94" selection-end-line="11" selection-end-column="94" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/mojo/verticles/HttpVerticle.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="138">
+          <caret line="65" column="88" lean-forward="true" selection-start-line="65" selection-start-column="88" selection-end-line="65" selection-end-column="88" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/mojo/handlers/comments/PostCommentsHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="38" column="66" lean-forward="false" selection-start-line="38" selection-start-column="66" selection-end-line="38" selection-end-column="66" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/dashboard/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="283">
+          <caret line="119" column="42" lean-forward="false" selection-start-line="119" selection-start-column="42" selection-end-line="119" selection-end-column="42" />
+          <folding />
         </state>
       </provider>
     </entry>

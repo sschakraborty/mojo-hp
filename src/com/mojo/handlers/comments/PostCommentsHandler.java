@@ -18,7 +18,6 @@ public class PostCommentsHandler implements Handler<RoutingContext> {
             JsonObject body = ctx.getBodyAsJson();
 
             String problemsCode = body.getString("problemsCode");
-            int accountsId = body.getInteger("accountsId");
             String comment = body.getString("comment");
 
             String email = body.getString("email");
@@ -28,13 +27,15 @@ public class PostCommentsHandler implements Handler<RoutingContext> {
                     Utility.encrypt(email).equals(key)) {
                 problemsCode = Utility.encode(problemsCode);
                 comment = Utility.encode(comment);
+                email = Utility.encode(email);
 
                 // Create a SQL insert statement
 
                 StringBuilder query = new StringBuilder();
                 query.append("insert into Comments (Problems_code, Accounts_id, comment) values (");
                 query.append("\"").append(problemsCode).append("\", ");
-                query.append(accountsId).append(", ");
+                query.append("(select id from Accounts where email = \"");
+                query.append(email).append("\" limit 1)").append(", ");
                 query.append("\"").append(comment).append("\");");
 
                 Database.getClient().getConnection(conn -> {
