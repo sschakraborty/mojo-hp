@@ -4,6 +4,8 @@ import com.mojo.handlers.accounts.GetAccountHandler;
 import com.mojo.handlers.accounts.LoginHandler;
 import com.mojo.handlers.accounts.PostAccountHandler;
 import com.mojo.handlers.accounts.PutAccountHandler;
+import com.mojo.handlers.comments.GetCommentsHandler;
+import com.mojo.handlers.comments.PostCommentsHandler;
 import com.mojo.handlers.leaderboard.GetProblemWiseHandler;
 import com.mojo.handlers.leaderboard.GetRankHandler;
 import com.mojo.handlers.problems.GetProblemsHandler;
@@ -56,6 +58,12 @@ public class HttpVerticle extends AbstractVerticle {
 
         router.route(HttpMethod.GET, "/api/leaderboard/score").handler(new GetProblemWiseHandler());
         router.route(HttpMethod.GET, "/api/leaderboard/rank").handler(new GetRankHandler());
+
+        // Comments Section API
+        // GET /api/comments
+        // POST /api/comments
+        router.route(HttpMethod.POST, "/api/comments").handler(new PostCommentsHandler());
+        router.route(HttpMethod.GET, "/api/comments").handler(new GetCommentsHandler());
         
         try {
             vertx.createHttpServer().requestHandler(router::accept).listen(12400);

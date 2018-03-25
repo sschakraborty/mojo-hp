@@ -84,6 +84,26 @@
                     $("#panel_2").fadeIn(200, function() {
                         MathJax.Hub.Queue(["Typeset", MathJax.Hub, "problem_question_id"]);
                     });
+
+                    fetchComments(code);
+                }, "json");
+            }
+
+            function fetchComments(code) {
+                $("#comment_section_id").html("");
+
+                $.get("/api/comments", { email: window.parent.getEmail(),
+                                         key: window.parent.getKey(),
+                                         "problemsCode": atob(code) }, function(data) {
+                    var ht = "";
+                    $.each(data.rows, function(index, doc) {
+                        ht += "<div class='well well-sm'>";
+                        ht += "<b>" + atob(doc.name) + "</b> <span class='badge pull-right'>" + doc.c_time + "</span><br>";
+                        ht += atob(doc.comment);
+                        ht += "</div>";
+                    });
+
+                    $("#comment_section_id").html(ht);
                 }, "json");
             }
 
@@ -182,6 +202,11 @@
                 <div class="row" style="margin-top: 25px;">
                     <div class="col-xs-12">
                         <pre id="editor" style="width: 100%; height: 500px;"></pre>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 25px;">
+                    <div class="col-xs-12" id="comment_section_id">
+                        <!-- Media Comments goes here -->
                     </div>
                 </div>
             </div>
