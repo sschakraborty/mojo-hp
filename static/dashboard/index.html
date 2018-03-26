@@ -171,9 +171,9 @@
                 $("#submit_btn_id").on("click", function() {
                     $.post("/api/submissions", JSON.stringify({ "email": window.parent.getEmail(), "key": window.parent.getKey(), "Problems_code": currentProblemCode, "code": btoa(editor.getValue()), "language": $("#language").val() }), function(data) {
                         if(data.msg == "success") {
-                            alert("Submitted");
+                            location.reload();
                         } else {
-                            alert("Could not submit");
+                            alert("Could not submit code! Please retry.");
                         }
                     }, "json");
                 });
