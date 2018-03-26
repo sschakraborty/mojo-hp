@@ -97,13 +97,13 @@
                                          "problemsCode": atob(code) }, function(data) {
                     var ht = "";
                     ht += "<div class='well well-sm'><div class='row'>";
-                        ht += "<div class='col-xs-9'><input class='form-control' type='text' id='comment_text_id'></div>";
+                        ht += "<div class='col-xs-9'><input class='form-control' type='text' id='comment_text_id' onkeypress='checkPress(event, \"" + code + "\");'></div>";
                         ht += "<div class='col-xs-3'><button class='btn btn-primary btn-block' onclick='postComment(\""+code+"\");'>Post Comment</button></div>";
                     ht += "</div></div>";
                     $.each(data.rows, function(index, doc) {
                         ht += "<div class='well well-sm'>";
-                        ht += "<b>" + atob(doc.name) + "</b><code>";
-                        ht += doc.email + "</code>";
+                        ht += "<b>" + atob(doc.name) + "</b><code class=''>";
+                        ht += atob(doc.email) + "</code>";
                         ht += "<span class='badge pull-right'>" + doc.c_time + "</span><br>";
                         ht += atob(doc.comment);
                         ht += "</div>";
@@ -125,6 +125,12 @@
                         fetchComments(code);
                     }
                 }, "json");
+            }
+
+            function checkPress(evt, code) {
+                if(evt.keyCode == 13) {
+                    postComment(code);
+                }
             }
 
             function mapLanguageCode(aceVal) {
