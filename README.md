@@ -17,17 +17,17 @@ To use MOJO:
 	</ul>
 	<li>Download the latest release of MOJO as ZIP.
 	<li>Unpack ZIP file in some directory.
-	<li>Update the **config.json** file as follows
+	<li>Update the <b>config.json</b> file as follows
 	<ul>
 		<li>The database object is for connecting to the database.
 		<li>Update the database username / password / database name etc. properly.
-		<li>Change the security key to a **long random alphanumeric string with special characters**.
+		<li>Change the security key to a <b>long random alphanumeric string with special characters</b>.
 		<li>This string serves as salt value for encrypting keys throughout the application.
 		<li>Changing the key is very highly recommended. This key has to be kept secret for security reasons.
 		<li>Finally update the judge Test folder. The Test folder is a folder where all the submitted codes, their compiled binaries (if applicable) and output files are stored for comparison purpose and also for future reference.
 		<li>The Test folder must be a blank valid folder on the system. One can keep the default Test folder as included with MOJO release (just update the proper path).
 	</ul>
-	<li>Finally execute the **./startup.sh** script to start MOJO.
+	<li>Finally execute the <b>./startup.sh</b> script to start MOJO.
 	<li>Enter the valid configuration file (.json) path.
 	<li>If everything was alright, MOJO must start up. Open up http://127.0.0.1:12400/ on browser to see MOJO in action.
 </ul>
