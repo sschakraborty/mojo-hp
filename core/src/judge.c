@@ -193,46 +193,17 @@ uint64_t parse_int(char* string, off_t* off)
 uint64_t get_vm_size(pid_t pid)
 {
     char* path = NULL;
-    asprintf(&path, "/proc/%d/stat", pid);
+    asprintf(&path, "/proc/%d/statm", pid);
 
-    int fd = open(path, 0);
-    if (fd == -1)
+    FILE* file = fopen(path, "r");
+    if (file == NULL)
         return 0;
-    
-    static char buffer[512];
-    memset(buffer, 0, sizeof buffer);
 
-    int n_bytes = read(fd, buffer, sizeof buffer);
-    off_t offset = 0;
+    uint64_t text, data;
+    fscanf(file ,"%*lu %*lu %*lu %lu %*lu %lu %*lu", &text, &data);
+    fclose(file);
 
-    // Skip 25 spaces
-    int count = 25;
-    while (count) {
-        if(isspace(buffer[offset++]))
-            count--;
-    }
-
-    uint64_t code_start, code_end, stack_start;
-    uint64_t data_start, data_end, brk, argv_start;
-
-    code_start = parse_int(buffer, &offset);
-    code_end = parse_int(buffer, &offset);
-    stack_start = parse_int(buffer, &offset);
-    // fscanf(file, "%lu %lu %lu", &code_start, &code_end, &stack_start);
-    count = 17;
-    while (count) {
-        if(isspace(buffer[offset++]))
-            count--;
-    }
-
-    data_start = parse_int(buffer, &offset);
-    data_end = parse_int(buffer, &offset);
-    brk = parse_int(buffer, &offset);
-    argv_start = parse_int(buffer, &offset);
-    //fscanf(file, "%lu %lu %lu %lu", &data_start, &data_end, &brk, &argv_start);
-
-    uint64_t ans = code_end-code_start+data_end-data_start+brk-data_end+argv_start-stack_start;
-    return ans;
+    return (text+data)*PAGE_SIZE;
 }
 
 
@@ -313,8 +284,8 @@ char* run_native_compiled(char** args, uint32_t cpu, char* src, char* input, cha
         dup2(1, 2);
         struct rlimit lim;
 
-        lim.rlim_cur = lim.rlim_max = MAX_CHILDREN;
-        if (-1 == prlimit(pid, RLIMIT_NPROC, &lim, NULL)) {
+        lim.rlim_cur = lim.rlim_max = 128UL << 20;
+        if (-1 == prlimit(pid, RLIMIT_STACK, &lim, NULL)) {
             printf("[Error] RLIMIT_NPROC : %m\n");
             exit(1);
         }
@@ -332,23 +303,34 @@ char* run_native_compiled(char** args, uint32_t cpu, char* src, char* input, cha
         close(fd[1]);
         close(test_case_fd);
 
+        struct rusage usage;
+        int32_t cpu_time = 0;
         uint64_t mem_size = 0;
         int ret;
         do
         {
-            ret = waitpid(pid, &status, WNOHANG|WUNTRACED);
+            ret = wait4(pid, &status, WNOHANG|WUNTRACED|WCONTINUED, &usage);
+            cpu_time = usage.ru_utime.tv_sec;
+            printf("[CPU] %li %li\n", usage.ru_utime.tv_sec, usage.ru_stime.tv_sec);
             mem_size = MAX(mem_size, get_vm_size(pid));
-            dprintf(1, "[MEM] %lu KiB\n", mem_size>>10);
         }
-        while (!ret && mem_size <= MAX_MEM);
+        while (!ret && mem_size <= MAX_MEM /* && cpu_time <= cpu */);
 
         printf("[INFO] Memory Consumed : %lu KiB\n", mem_size >> 10);
+        printf("[INFO] CPU Time Consumed : %i\n", cpu_time);
+
         remove(bin);
 
         if (mem_size > MAX_MEM)
         {
             close(fd[0]);
             return "MLE";
+        }
+
+        if (cpu_time > cpu)
+        {
+            close(fd[0]);
+            return "TLE";
         }
 
         if (WIFEXITED(status))
@@ -876,7 +858,7 @@ char* run_java(uint32_t cpu, char* src, char* input, char* output)
                 if (has_main_method(path_file))
                 {
                     char* ptr = strrchr(entry->d_name, '.');
-                    asprintf(&main_class, "%.*s", ptr-entry->d_name, entry->d_name);
+                    asprintf(&main_class, "%.*s", (int) (ptr-entry->d_name), entry->d_name);
                     break;
                 }
 
