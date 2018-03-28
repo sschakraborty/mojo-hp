@@ -7,7 +7,10 @@ create table if not exists Accounts (
 	email varchar(150) not null,
 	roll varchar(50) not null,
 	phone_no varchar(50) not null,
-	pwd varchar(100) not null
+	pwd varchar(100) not null,
+	constraint unique_email unique (name),
+	constraint unique_roll unique (roll),
+	constraint unique_phone_no unique (phone_no)
 ) engine = InnoDB;
 
 create table if not exists Problems (
