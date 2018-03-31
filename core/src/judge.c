@@ -193,17 +193,60 @@ uint64_t parse_int(char* string, off_t* off)
 uint64_t get_vm_size(pid_t pid)
 {
     char* path = NULL;
-    asprintf(&path, "/proc/%d/statm", pid);
+    asprintf(&path, "/proc/%d/status", pid);
 
     FILE* file = fopen(path, "r");
     if (file == NULL)
         return 0;
 
-    uint64_t text, data;
-    fscanf(file ,"%*lu %*lu %*lu %lu %*lu %lu %*lu", &text, &data);
-    fclose(file);
+    uint64_t text = 0, data = 0, stk = 0, tmp;
+    char ch;
+    int status = 0;
+    char buf[8] = "";
+    while ((ch = fgetc(file)) != -1 && status != 3)
+    {
+        if (ch == 'V')
+        {
+            ungetc(ch, file);
+            fscanf(file, "%s", buf);
+            if (strncmp(buf, "VmData", 6) == 0)
+            {
+                status++;
+                char c;
+                tmp = 0;
+                while (!isdigit(c = fgetc(file)));
+                do {
+                    tmp = tmp*10 + c-48;
+                } while (isdigit(c = fgetc(file)));
+                data = tmp;
+            }
+            else if (strncmp(buf, "VmExe", 5) == 0)
+            {
+                status++;
+                char c;
+                tmp = 0;
+                while (!isdigit(c = fgetc(file)));
+                do {
+                    tmp = tmp*10 + c-48;
+                } while (isdigit(c = fgetc(file)));
+                text = tmp;
+            }
+            else if (strncmp(buf, "VmStk", 5) == 0)
+            {
+                status++;
+                char c;
+                tmp = 0;
+                while (!isdigit(c = fgetc(file)));
+                do {
+                    tmp = tmp*10 + c-48;
+                } while (isdigit(c = fgetc(file)));
+                stk = tmp;
+            }
+        }
+    }
 
-    return (text+data)*PAGE_SIZE;
+    fclose(file);
+    return text+data+stk << 10;
 }
 
 
@@ -233,8 +276,6 @@ char* run_native_compiled(char** args, uint32_t cpu, char* src, char* input, cha
             break;
         }
     }
-
-    printf("[INFO] Executable : %s\n", bin);
 
     pid_t pid = fork();
     if (! pid)
@@ -273,28 +314,27 @@ char* run_native_compiled(char** args, uint32_t cpu, char* src, char* input, cha
         return NULL;
     }
 
-    puts("[INFO] Compiled Successfully !");
-
     pid = fork();
     if (! pid)
     {
         close(fd[0]);
         dup2(test_case_fd, 0);
         dup2(fd[1], 1);
-        dup2(1, 2);
+        dup2(fd[1], 2);
+
         struct rlimit lim;
-
-        lim.rlim_cur = lim.rlim_max = 128UL << 20;
-        if (-1 == prlimit(pid, RLIMIT_STACK, &lim, NULL)) {
-            printf("[Error] RLIMIT_NPROC : %m\n");
-            exit(1);
-        }
-
         lim.rlim_cur = lim.rlim_max = cpu;
-        if (-1 == prlimit(pid, RLIMIT_CPU, &lim, NULL)) {
-            printf("[Error] RLIMIT_CPU : %m\n");
-            exit(1);
-        }
+        prlimit(getpid(), RLIMIT_CPU, &lim, NULL);
+
+        lim.rlim_cur = lim.rlim_max = 3;
+        prlimit(getpid(), RLIMIT_NPROC, &lim, NULL);
+
+        lim.rlim_cur = lim.rlim_max = (1UL) << 20;
+        prlimit(getpid(), RLIMIT_STACK, &lim, NULL);
+
+        lim.rlim_cur = lim.rlim_max = (256UL) << 20;
+        prlimit(getpid(), RLIMIT_RSS, &lim, NULL);
+
         char* args[] = { bin, NULL };
         execve(args[0], args, NULL);
     }
@@ -302,23 +342,23 @@ char* run_native_compiled(char** args, uint32_t cpu, char* src, char* input, cha
     {
         close(fd[1]);
         close(test_case_fd);
-
-        struct rusage usage;
-        int32_t cpu_time = 0;
+        struct rusage usage = {0};
         uint64_t mem_size = 0;
         int ret;
+
+        struct timeval s, e;
+        gettimeofday(&s, NULL);
+
         do
         {
-            ret = wait4(pid, &status, WNOHANG|WUNTRACED|WCONTINUED, &usage);
-            cpu_time = usage.ru_utime.tv_sec;
-            printf("[CPU] %li %li\n", usage.ru_utime.tv_sec, usage.ru_stime.tv_sec);
+            ret = waitpid(pid, &status, WNOHANG|WCONTINUED|WUNTRACED);
             mem_size = MAX(mem_size, get_vm_size(pid));
+            gettimeofday(&e, NULL);
         }
-        while (!ret && mem_size <= MAX_MEM /* && cpu_time <= cpu */);
+        while (ret != pid && mem_size <= MAX_MEM && e.tv_sec <= s.tv_sec+cpu);
 
         printf("[INFO] Memory Consumed : %lu KiB\n", mem_size >> 10);
-        printf("[INFO] CPU Time Consumed : %i\n", cpu_time);
-
+        printf("[INFO] CPU : %li\n", e.tv_sec-s.tv_sec);
         remove(bin);
 
         if (mem_size > MAX_MEM)
@@ -327,7 +367,7 @@ char* run_native_compiled(char** args, uint32_t cpu, char* src, char* input, cha
             return "MLE";
         }
 
-        if (cpu_time > cpu)
+        if (e.tv_sec > s.tv_sec+cpu)
         {
             close(fd[0]);
             return "TLE";
@@ -352,7 +392,7 @@ char* run_native_compiled(char** args, uint32_t cpu, char* src, char* input, cha
                 close(fd[0]);
                 dup2(fd[1], 1);
                 dup2(1, 2);
-                char* args[] = { "/usr/bin/diff", "--brief", output, "-", NULL };
+                char const* args[] = { "/usr/bin/diff", "--brief", output, "-", NULL };
                 execve(args[0], args, environ);
             }
             else
