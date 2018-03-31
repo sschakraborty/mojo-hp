@@ -5,6 +5,7 @@
 #include "java_lang.h"
 #include <dirent.h>
 #include <linux/random.h>
+#include <sys/time.h>
 #include <alloca.h>
 #include <getopt.h>
 #include <ctype.h>
@@ -43,7 +44,7 @@ DEFINE_PROTO(run_ruby);
 
 char* gen_temp_name();
 char* run_native_compiled(char** argv, uint32_t cpu_time, char* src, char* test_in, char* out);
-char* run_interpreted(char** argv, char** compile, uint32_t cpu_time, char* src, char* test_in, char* out);
+char* ruby(char** argv, char** compile, uint32_t cpu_time, char* src, char* test_in, char* out);
 void show_help(char* program);
 
 uint32_t PAGE_SIZE;
@@ -463,7 +464,14 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
         }
     }
 
-    if (-1 == pipe(in) && -1 == pipe(fd))
+    if (-1 == pipe(in))
+    {
+        fprintf(stderr, "[ERROR] Pipe Failed\n");
+        fflush(stderr);
+        return NULL;
+    }
+
+    if (-1 == pipe(fd))
     {
         fprintf(stderr, "[ERROR] Pipe Failed\n");
         fflush(stderr);
@@ -473,12 +481,16 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
     int file = open(input, 0);
     if (file == -1)
     {
+        close(fd[0]);
+        close(fd[1]);
+        close(in[0]);
+        close(in[1]);
         fprintf(stderr, "[ERROR] File doesn't Exist\n");
         fflush(stderr);
         return NULL;
     }
 
-    pid_t pid = fork();
+    int pid = fork();
     if (pid == 0)
     {
         close(in[0]);
@@ -497,7 +509,7 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
         lim.rlim_cur = lim.rlim_max = (1UL) << 20;
         prlimit(getpid(), RLIMIT_STACK, &lim, NULL);
 
-        lim.rlim_cur = lim.rlim_max = (256UL) << 20;
+        lim.rlim_cur = lim.rlim_max = (128UL) << 20;
         prlimit(getpid(), RLIMIT_RSS, &lim, NULL);
 
         execve(*args, args, environ);
@@ -515,8 +527,8 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
 
         do
         {
-            ret = waitpid(pid, &status, WNOHANG|WCONTINUED|WUNTRACED);
             mem = MAX(mem, get_vm_size(pid));
+            ret = waitpid(pid, &status, WNOHANG|WCONTINUED|WUNTRACED);
             gettimeofday(&e, NULL);
         }
         while (ret != pid && mem <= MAX_MEM && e.tv_sec <= s.tv_sec+cpu);
@@ -549,29 +561,32 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
             }
             close(fd[0]);
 
-            char error_expression[] = "^(.*Error)";
-            regex_t reg;
-            regmatch_t match;
-            printf("[ERROR_INFO] %s\n", error_text);
-
-            if (regcomp(&reg, error_expression, REG_EXTENDED|REG_NEWLINE))
+            if (error_text)
             {
-                printf("[ERROR] regcomp");
-                return NULL;
-            }
+                char error_expression[] = "^(.*Error)";
+                regex_t reg;
+                regmatch_t match;
+                printf("[ERROR_INFO] %s\n", error_text);
 
-            if (regexec(&reg, error_text, 1, &match, 0) == 0)
-            {
-                int start = match.rm_so, end = match.rm_eo;
+                if (regcomp(&reg, error_expression, REG_EXTENDED|REG_NEWLINE))
+                {
+                    printf("[ERROR] regcomp");
+                    return NULL;
+                }
+
+                if (regexec(&reg, error_text, 1, &match, 0) == 0)
+                {
+                    int start = match.rm_so, end = match.rm_eo;
+                    regfree(&reg);
+
+                    if (strncmp("Syntax", error_text+start, 6) == 0)
+                        return "CERR";
+                    else
+                        return "RTE";
+                }
+
                 regfree(&reg);
-
-                if (strncmp("Syntax", error_text+start, 6) == 0)
-                    return "CERR";
-                else
-                    return "RTE";
             }
-
-            regfree(&reg);
 
             if (pipe(fd) == -1)
             {
@@ -612,7 +627,7 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
     }
 }
 
-char* run_interpreted(char** args, char** compile_flags, uint32_t cpu, char* src, char* input, char* output)
+char* ruby(char** args, char** compile_flags, uint32_t cpu, char* src, char* input, char* output)
 {
     int in[2], fd[2];
 
@@ -625,9 +640,14 @@ char* run_interpreted(char** args, char** compile_flags, uint32_t cpu, char* src
             return NULL;
         }
 
+        fprintf(stdout, "[INFO] fd[%d, %d]\n", fd[0], fd[1]);
+        fprintf(stdout, "[INFO] Compiling ...\n");
+
         pid_t pid = fork();
         if (pid == 0)
         {
+            close(fd[0]);
+            close(1);
             close(0);
             dup2(fd[1], 2);
 
@@ -642,15 +662,23 @@ char* run_interpreted(char** args, char** compile_flags, uint32_t cpu, char* src
             char buffer[1024];
             int n;
             n = read(fd[0], buffer, sizeof(buffer));
+            close(fd[0]);
             if (n > 0)
             {
-                close(fd[0]);
+                printf("[ERROR_INFO] %.*s", n, buffer);
                 return "CERR";
             }
         }
     }
 
-    if (-1 == pipe(in) && -1 == pipe(fd))
+    if (-1 == pipe(in))
+    {
+        fprintf(stderr, "[ERROR] Pipe Failed\n");
+        fflush(stderr);
+        return NULL;
+    }
+
+    if (-1 == pipe(fd))
     {
         fprintf(stderr, "[ERROR] Pipe Failed\n");
         fflush(stderr);
@@ -665,26 +693,34 @@ char* run_interpreted(char** args, char** compile_flags, uint32_t cpu, char* src
         return NULL;
     }
 
-    pid_t pid = fork();
+    printf("[INFO] in[%d, %d], fd[%d, %d]\n", in[0], in[1], fd[0], fd[1]);
+
+    int pid = fork();
     if (pid == 0)
     {
         close(in[0]);
+        close(fd[0]);
         dup2(file, 0);
         dup2(in[1], 1);
         dup2(fd[1], 2);
 
         struct rlimit lim;
         lim.rlim_cur = lim.rlim_max = cpu;
-        if (-1 == prlimit(pid, RLIMIT_CPU, &lim, NULL)) {
-            printf("[Error] RLIMIT_CPU : %m\n");
-            exit(1);
-        }
+        prlimit(getpid(), RLIMIT_CPU, &lim, NULL);
+
+        lim.rlim_cur = lim.rlim_max = (1UL) << 20;
+        prlimit(getpid(), RLIMIT_STACK, &lim, NULL);
+
+        lim.rlim_cur = lim.rlim_max = (128UL) << 20;
+        prlimit(getpid(), RLIMIT_RSS, &lim, NULL);
+
         execve(*args, args, NULL);
     }
     else
     {
         close(file);
         close(in[1]);
+        close(fd[1]);
 
         int ret, status;
         uint64_t mem = 0;
@@ -694,12 +730,14 @@ char* run_interpreted(char** args, char** compile_flags, uint32_t cpu, char* src
 
         do
         {
-            ret = waitpid(pid, &status, WNOHANG|WCONTINUED|WUNTRACED);
             mem = MAX(mem, get_vm_size(pid));
+            ret = waitpid(pid, &status, WNOHANG|WCONTINUED|WUNTRACED);
             gettimeofday(&e, NULL);
         }
         while (ret != pid && mem <= MAX_MEM && e.tv_sec <= s.tv_sec+cpu);
 
+        printf("[INFO] Memory : %lu KiB\n", mem >> 10);
+        printf("[INFO] CPU : %li\n", e.tv_sec-s.tv_sec);
 
         if (mem > MAX_MEM)
         {
@@ -707,22 +745,50 @@ char* run_interpreted(char** args, char** compile_flags, uint32_t cpu, char* src
             return "MLE";
         }
 
-        if (ret == -1)
+        if (e.tv_sec > s.tv_sec+cpu)
         {
             close(in[0]);
-            fprintf(stderr, "[ERROR] Waitpid\n");
-            fflush(stderr);
-            return NULL;
+            return "TLE";
         }
 
         if (WIFEXITED(status))
         {
-            if (pipe(fd) == -1)
+            // Check Error Stream for any error
+            char* error_text = 0;
+            char temp_buffer[1024];
+            int count;
+            while ((count = read(fd[0], temp_buffer, sizeof(temp_buffer))) > 0)
             {
-                fprintf(stderr, "[ERROR] Pipe failed\n");
-                fflush(stdout);
-                close(fd[0]);
-                return NULL;
+                if (error_text)
+                    asprintf(&error_text, "%s%.*s", error_text, count, temp_buffer);
+                else
+                    asprintf(&error_text, "%.*s", count, temp_buffer);
+            }
+
+            close(fd[0]);
+
+            if (error_text)
+            {
+                char error_expression[] = "^(.*Error)(.*)";
+                regex_t reg;
+                regmatch_t match;
+                printf("[ERROR_INFO] %s\n", error_text);
+
+                if (regcomp(&reg, error_expression, REG_EXTENDED|REG_NEWLINE))
+                {
+                    printf("[ERROR] regcomp");
+                    return NULL;
+                }
+
+                if (regexec(&reg, error_text, 1, &match, 0) == 0)
+                {
+                    int start = match.rm_so, end = match.rm_eo;
+                    regfree(&reg);
+
+                    return "RTE";
+                }
+
+                regfree(&reg);
             }
 
             pid_t pid = fork();
@@ -1103,7 +1169,7 @@ char* run_ruby(uint32_t cpu, char* src, char* input, char* output)
 {
     char* args[] = { "/usr/bin/ruby", src, NULL };
     char* cmd[] = { "-c", src, NULL };
-    char* res = run_interpreted(args, cmd, cpu, src, input, output);
+    char* res = ruby(args, cmd, cpu, src, input, output);
     return res;
 }
 
