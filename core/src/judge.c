@@ -499,7 +499,7 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
 
         lim.rlim_cur = lim.rlim_max = (256UL) << 20;
         prlimit(getpid(), RLIMIT_RSS, &lim, NULL);
-        
+
         execve(*args, args, environ);
     }
     else
@@ -520,6 +520,8 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
             gettimeofday(&e, NULL);
         }
         while (ret != pid && mem <= MAX_MEM && e.tv_sec <= s.tv_sec+cpu);
+
+        printf("[INFO] Memory : %llu KiB\n", mem >> 10);
 
         if (mem > MAX_MEM)
         {
@@ -687,13 +689,17 @@ char* run_interpreted(char** args, char** compile_flags, uint32_t cpu, char* src
         int ret, status;
         uint64_t mem = 0;
 
+        struct timeval s, e;
+        gettimeofday(&s, NULL);
+
         do
         {
-            ret = waitpid(pid, &status, WNOHANG);
-            if (ret > 0)
-                break;
-            mem = get_vm_size(pid);
-        } while (!ret && mem <= MAX_MEM);
+            ret = waitpid(pid, &status, WNOHANG|WCONTINUED|WUNTRACED);
+            mem = MAX(mem, get_vm_size(pid));
+            gettimeofday(&e, NULL);
+        }
+        while (ret != pid && mem <= MAX_MEM && e.tv_sec <= s.tv_sec+cpu);
+
 
         if (mem > MAX_MEM)
         {
