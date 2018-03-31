@@ -440,7 +440,6 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
         pid_t pid = fork();
         if (pid == 0)
         {
-            //close(0);
             dup2(fd[1], 2);
             close(fd[0]);
             char* arg[] = { *args, "-mpy_compile", args[1], NULL };
@@ -490,10 +489,17 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
 
         struct rlimit lim;
         lim.rlim_cur = lim.rlim_max = cpu;
-        if (-1 == prlimit(getpid(), RLIMIT_CPU, &lim, NULL)) {
-            printf("[Error] RLIMIT_CPU : %m\n");
-            exit(1);
-        }
+        prlimit(getpid(), RLIMIT_CPU, &lim, NULL);
+
+        lim.rlim_cur = lim.rlim_max = 3;
+        prlimit(getpid(), RLIMIT_NPROC, &lim, NULL);
+
+        lim.rlim_cur = lim.rlim_max = (1UL) << 20;
+        prlimit(getpid(), RLIMIT_STACK, &lim, NULL);
+
+        lim.rlim_cur = lim.rlim_max = (256UL) << 20;
+        prlimit(getpid(), RLIMIT_RSS, &lim, NULL);
+        
         execve(*args, args, environ);
     }
     else
@@ -504,13 +510,16 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
         int ret, status;
         uint64_t mem = 0;
 
+        struct timeval s, e;
+        gettimeofday(&s, NULL);
+
         do
         {
-            ret = waitpid(pid, &status, WNOHANG|WUNTRACED);
-            if (ret > 0)
-                break;
+            ret = waitpid(pid, &status, WNOHANG|WCONTINUED|WUNTRACED);
             mem = MAX(mem, get_vm_size(pid));
-        } while (!ret && mem <= MAX_MEM);
+            gettimeofday(&e, NULL);
+        }
+        while (ret != pid && mem <= MAX_MEM && e.tv_sec <= s.tv_sec+cpu);
 
         if (mem > MAX_MEM)
         {
@@ -518,12 +527,10 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
             return "MLE";
         }
 
-        if (ret == -1)
+        if (e.tv_sec > s.tv_sec+cpu)
         {
             close(in[0]);
-            fprintf(stderr, "[ERROR] Waitpid\n");
-            fflush(stderr);
-            return NULL;
+            return "TLE";
         }
 
         if (WIFEXITED(status))
@@ -543,7 +550,7 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
             char error_expression[] = "^(.*Error)";
             regex_t reg;
             regmatch_t match;
-            printf("[ERROR_INFO]$ %s\n", error_text);
+            printf("[ERROR_INFO] %s\n", error_text);
 
             if (regcomp(&reg, error_expression, REG_EXTENDED|REG_NEWLINE))
             {
@@ -556,7 +563,6 @@ char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* i
                 int start = match.rm_so, end = match.rm_eo;
                 regfree(&reg);
 
-                printf("[INFO] Match : %.*s\n", end-start, error_text+start);
                 if (strncmp("Syntax", error_text+start, 6) == 0)
                     return "CERR";
                 else
