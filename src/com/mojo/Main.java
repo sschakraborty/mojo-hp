@@ -7,6 +7,9 @@
 package com.mojo;
 
 import com.mojo.resources.Database;
+import com.mojo.verticles.ExecutorVerticle;
+import com.mojo.verticles.HttpVerticle;
+import com.mojo.verticles.NativeVerticle;
 import io.vertx.core.Vertx;
 
 public class Main {
@@ -15,7 +18,7 @@ public class Main {
             Vertx v = Vertx.vertx();
             Database.setVertxInstance(v);
 
-            v.deployVerticle("com.mojo.verticles.HttpVerticle", (e) -> {
+            v.deployVerticle(new HttpVerticle(), (e) -> {
                 if (e.succeeded()) {
                     System.out.println("Successfully deployed HTTP Interface");
                 } else {
@@ -23,7 +26,7 @@ public class Main {
                 }
             });
 
-            v.deployVerticle("com.mojo.verticles.ExecutorVerticle", (e) -> {
+            v.deployVerticle(new ExecutorVerticle(), (e) -> {
                 if (e.succeeded()) {
                     System.out.println("Successfully deployed Judge");
                 } else {
@@ -31,9 +34,8 @@ public class Main {
                 }
             });
         } else {
-            // Weird AF error
-            // Supposed not to happen
-            // Reserved for future start time checks
+            // Verticle deployment errors
+            System.err.println("Error in Main class: Verticles could not be deployed");
         }
     }
 }
