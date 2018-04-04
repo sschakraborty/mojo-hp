@@ -22,6 +22,11 @@ public class NativeVerticle extends AbstractVerticle {
         return ".generic";
     }
 
+    public static String mapCoreExtension(String lang) {
+        if(lang.equals("py2") || lang.equals("py3")) return lang;
+        else return mapExtension(lang);
+    }
+
     private class Job implements Runnable {
         private String id;
         private String problemCode;
@@ -52,6 +57,12 @@ public class NativeVerticle extends AbstractVerticle {
                 out.write(code);
                 out.close();
                 fout.close();
+
+                // Calling native core from Process API
+                ProcessBuilder processBuilder = new ProcessBuilder("./core/obj/judge",
+                        "-d", dirPath,
+                        "-f", filePath,
+                        "-l", mapCoreExtension(lang));
             } catch(FileNotFoundException e) {
                 // System.err.println("File was not found");
             } catch(IOException e) {
