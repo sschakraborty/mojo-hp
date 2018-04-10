@@ -58,13 +58,13 @@ struct lang_t
 struct lang_t languages[] = {
     "c", run_c,
     "cpp", run_cpp,
-    "java", run_java,
+    "java8", run_java,
     "py2", run_py2,
     "py3", run_py3,
     "rb", run_ruby,
     0, 0, 0, 0
 };
-
+char* temp_dir;
 
 int main(int argc, char** argv)
 {
@@ -73,7 +73,7 @@ int main(int argc, char** argv)
     char* output;
     char* lang;
     char* program_name = *argv;
-    char** dummy[] = { &file, &output, &input, &lang };
+    char** dummy[] = { &file, &output, &input, &lang, &temp_dir };
     uint32_t cpu_time = 2;
 
     if (argc == 1)
@@ -84,27 +84,31 @@ int main(int argc, char** argv)
     int index;
     while (1) {
         struct option opts[] = {
-            "path", 1, 0, 0,
+            "file", 1, 0, 0,
             "output", 1, 0, 0,
             "input", 1, 0, 0,
             "lang", 1, 0, 0,
+            "temp", 1, 0, 0,
             "cpu", 1, 0, 0,
             "help", 0, 0, 0x1234,
             0, 0, 0, 0
         };
-        int ret = getopt_long(argc, argv, "p:o:i:l:n:h", opts, &index);
+        int ret = getopt_long(argc, argv, "d:f:o:i:l:n:h", opts, &index);
         if (ret == -1)
             break;
         if (ret == 0x1234)
             show_help(program_name);
-        if (ret == 0 && index < 4) {
+        if (ret == 0 && index <= 4) {
             *dummy[index] = optarg;
         }
-        if (index == 4 && ret == 0) {
+        if (index == 5 && ret == 0) {
             sscanf(optarg, "%i", &cpu_time);
         }
         switch (ret) {
-            case 'p':
+            case 'd':
+                temp_dir = optarg;
+                break;
+            case 'f':
                 file = optarg;
                 break;
             case 'n':
@@ -157,7 +161,7 @@ char* gen_temp_name()
 {
     char* bin = NULL;
     uint8_t buf[64];
-    asprintf(&bin, "/var/tmp/");
+    bin = strdup(temp_dir);
 
     int n_bytes = syscall(SYS_getrandom, buf, sizeof buf, GRND_NONBLOCK);
     if (n_bytes == -1) {
