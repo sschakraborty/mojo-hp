@@ -2,7 +2,6 @@
 #define _GNU_SOURCE
 #endif
 
-#include "java_lang.h"
 #include <dirent.h>
 #include <linux/random.h>
 #include <sys/time.h>
@@ -46,6 +45,7 @@ char* gen_temp_name();
 char* run_native_compiled(char** argv, uint32_t cpu_time, char* src, char* test_in, char* out);
 char* ruby(char** argv, char** compile, uint32_t cpu_time, char* src, char* test_in, char* out);
 void show_help(char* program);
+extern int has_main_method(char* class_file);
 
 uint32_t PAGE_SIZE;
 
