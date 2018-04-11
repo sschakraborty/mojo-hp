@@ -1,4 +1,4 @@
-format ELF64
+format ELF64 
 
 ;   +---------------------------------------------------------+
 ;   |                                                         |
@@ -105,7 +105,6 @@ has_main_method:
 
     pop rsi
     push rbx
-    push rsi
     mov rbp, rax
 
     add rbx, 0xA
@@ -115,12 +114,10 @@ has_main_method:
 
 .populate_constant_pool:
 
-    cmp edx, [rsp]
+    cmp edx, esi
     jz .populated_constant_pool
 
-    mov cl, [rbx]
-    movzx rcx, cl
-
+    movzx rcx, byte [rbx]
     mov eax, edx
     cdqe
     shl eax, 4
@@ -300,8 +297,6 @@ has_main_method:
 ;   Deallocate all mapped pages
 
 .free_pool:
-
-    pop rax
 
     mov rdi, rbp
     mov rsi, [rsp+8]
