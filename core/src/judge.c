@@ -2,6 +2,16 @@
 #define _GNU_SOURCE
 #endif
 
+#include <endian.h>
+#include <stdio.h>
+#include <syscall.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <stdint.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+#include <string.h>
 #include <dirent.h>
 #include <linux/random.h>
 #include <sys/time.h>
@@ -12,8 +22,6 @@
 #include <sys/resource.h>
 #include <sys/types.h>
 #include <regex.h>
-#include <stdint.h>
-#include <fcntl.h>
 
 /*
  * Resource Limits
@@ -47,6 +55,10 @@ char* ruby(char** argv, char** compile, uint32_t cpu_time, char* src, char* test
 void show_help(char* program);
 extern int has_main_method(char* class_file);
 
+typedef uint8_t u1;
+typedef uint16_t u2;
+typedef uint32_t u4;
+typedef uint64_t u8;
 uint32_t PAGE_SIZE;
 
 struct lang_t
