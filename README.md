@@ -5,31 +5,32 @@ The Mini Online Judge Operator (MOJO) is a high performance **online coding judg
 
 The core of the judge is natively written on top of Linux kernel API (Linux 2.6+) and is developed and maintained by <a href="https://github.com/x0r19x91">@x0r19x91</a>. The core is asynchronous and highly capable of matching the speeds required for a performance critical distributed online judge.
 
-The latest version is MOJO 1.1. Works for some patches and improvements are being done. These would make way in MOJO 1.1.1.
+The latest version is MOJO 1.1.1. Works for high performance native core is in progress.
+These would make way in milestone release MOJO 1.2.0.
 
 To use MOJO:
 <ul>
 	<li>Pre-requisites
 	<ul>
-		<li>MOJO runs on all flavors of Linux OS (Kernel v2.6+).
-		<li>Currently there is no plan for supporting Windows.
-		<li>Java 8 and MySQL 5.6+ / MariaDB 10.1+ must be installed.
+		<li>MOJO runs on all flavors of Linux OS (Kernel v2.6+).</li>
+		<li>Currently there is no plan for supporting Windows.</li>
+		<li>Java 8 and MySQL 5.6+ / MariaDB 10.1+ must be installed.</li>
 	</ul>
-	<li>Download the latest release of MOJO as ZIP.
-	<li>Unpack ZIP file in some directory.
-	<li>Update the <b>config.json</b> file as follows
+	<li>Download the latest release of MOJO as ZIP.</li>
+	<li>Unpack ZIP file in some directory.</li>
+	<li>Update the <b>config.json</b> file as follows</li>
 	<ul>
-		<li>The database object is for connecting to the database.
-		<li>Update the database username / password / database name etc. properly.
-		<li>Change the security key to a <b>long random alphanumeric string with special characters</b>.
-		<li>This string serves as salt value for encrypting keys throughout the application.
-		<li>Changing the key is very highly recommended. This key has to be kept secret for security reasons.
-		<li>Finally update the judge Test folder. The Test folder is a folder where all the submitted codes, their compiled binaries (if applicable) and output files are stored for comparison purpose and also for future reference.
-		<li>The Test folder must be a blank valid folder on the system. One can keep the default Test folder as included with MOJO release (just update the proper path).
+		<li>The database object is for connecting to the database.</li>
+		<li>Update the database username / password / database name etc. properly.</li>
+		<li>Change the security key to a <b>long random alphanumeric string with special characters</b>.</li>
+		<li>This string serves as salt value for encrypting keys throughout the application.</li>
+		<li>Changing the key is very highly recommended. This key has to be kept secret for security reasons.</li>
+		<li>Finally update the judge Test folder. The Test folder is a folder where all the submitted codes, their compiled binaries (if applicable) and output files are stored for comparison purpose and also for future reference.</li>
+		<li>The Test folder must be a blank valid folder on the system. One can keep the default Test folder as included with MOJO release (just update the proper path).</li>
 	</ul>
-	<li>Finally execute the <b>./startup.sh</b> script to start MOJO.
-	<li>Enter the valid configuration file (.json) path.
-	<li>If everything was alright, MOJO must start up. Open up http://127.0.0.1:12400/ on browser to see MOJO in action.
+	<li>Finally execute the <b>./startup.sh</b> script to start MOJO.</li>
+	<li>Enter the valid configuration file (.json) path.</li>
+	<li>If everything was alright, MOJO must start up. Open up http://127.0.0.1:12400/ on browser to see MOJO in action.</li>
 </ul>
 
 For any support / contribution contact me at sschakraborty@hotmail.com
