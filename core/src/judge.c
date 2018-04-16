@@ -2,7 +2,6 @@
 #define _GNU_SOURCE
 #endif
 
-#include <endian.h>
 #include <stdio.h>
 #include <syscall.h>
 #include <unistd.h>
@@ -49,16 +48,12 @@ DEFINE_PROTO(run_py2);
 DEFINE_PROTO(run_py3);
 DEFINE_PROTO(run_ruby);
 
+extern int has_main_method(char* clazz_file);
 char* gen_temp_name();
 char* run_native_compiled(char** argv, uint32_t cpu_time, char* src, char* test_in, char* out);
 char* ruby(char** argv, char** compile, uint32_t cpu_time, char* src, char* test_in, char* out);
 void show_help(char* program);
-extern int has_main_method(char* class_file);
 
-typedef uint8_t u1;
-typedef uint16_t u2;
-typedef uint32_t u4;
-typedef uint64_t u8;
 uint32_t PAGE_SIZE;
 
 struct lang_t
