@@ -10,7 +10,7 @@ These would make way in milestone release MOJO 1.2.0.
 
 To use MOJO:
 <ul>
-	<li>Pre-requisites
+	<li>Pre-requisites</li>
 	<ul>
 		<li>MOJO runs on all flavors of Linux OS (Kernel v2.6+).</li>
 		<li>Currently there is no plan for supporting Windows.</li>
@@ -33,4 +33,5 @@ To use MOJO:
 	<li>If everything was alright, MOJO must start up. Open up http://127.0.0.1:12400/ on browser to see MOJO in action.</li>
 </ul>
 
+<br>
 For any support / contribution contact me at sschakraborty@hotmail.com
