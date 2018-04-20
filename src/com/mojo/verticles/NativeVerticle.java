@@ -6,13 +6,20 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.sql.SQLConnection;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class NativeVerticle extends AbstractVerticle {
-    private ExecutorService pool = Executors.newFixedThreadPool(4);
+    private static final ExecutorService pool = Executors.newFixedThreadPool(4);
 
     public static String mapExtension(String lang) {
         if(lang.equals("java8")) return ".java";
@@ -59,14 +66,58 @@ public class NativeVerticle extends AbstractVerticle {
                 fout.close();
 
                 // Calling native core from Process API
-                ProcessBuilder processBuilder = new ProcessBuilder("./core/obj/judge",
-                        "-d", dirPath,
-                        "-f", filePath,
-                        "-l", mapCoreExtension(lang));
+                String msg = "ACC";
+                for(JsonObject testcase : testcases) {
+                    ProcessBuilder processBuilder = new ProcessBuilder("./core/obj/judge",
+                            "-d", dirPath,
+                            "-f", filePath,
+                            "-l", mapCoreExtension(lang),
+                            "-i", testcase.getString("in_path"),
+                            "-o", testcase.getString("out_path")
+                    );
+
+                    processBuilder.redirectErrorStream(true);
+                    processBuilder.directory(dir);
+
+                    Process p = processBuilder.start();
+                    p.waitFor(10000, TimeUnit.MILLISECONDS);
+
+                    String str = new BufferedReader(new InputStreamReader(p.getInputStream())).readLine();
+                    if(!str.equalsIgnoreCase("ACC")) {
+                        msg = str;
+                        break;
+                    }
+                }
+
+                final String resultMsg = msg;
+                Database.getClient().getConnection(conn -> {
+                    if(conn.succeeded()) {
+                        SQLConnection connection = conn.result();
+
+                        StringBuilder sql = new StringBuilder();
+                        sql.append("update Solve_log set status = \"");
+                        sql.append(resultMsg);
+                        sql.append("\" where log_id = \"");
+                        sql.append(id);
+                        sql.append("\";");
+
+                        connection.update(sql.toString(), result -> {
+                            if(result.failed()) {
+                                System.err.println(result.cause().getMessage());
+                            }
+                        });
+
+                        connection.close();
+                    } else {
+                        System.err.println("Database error: " + conn.cause().getMessage());
+                    }
+                });
             } catch(FileNotFoundException e) {
                 // System.err.println("File was not found");
             } catch(IOException e) {
                 // System.err.println("IO error");
+            } catch(InterruptedException e) {
+                // System.err.println("Internal error");
             }
         }
     }
