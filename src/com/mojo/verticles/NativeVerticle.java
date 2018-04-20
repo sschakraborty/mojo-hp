@@ -73,7 +73,8 @@ public class NativeVerticle extends AbstractVerticle {
                             "-f", filePath,
                             "-l", mapCoreExtension(lang),
                             "-i", testcase.getString("in_path"),
-                            "-o", testcase.getString("out_path")
+                            "-o", testcase.getString("out_path"),
+                            "-n", new StringBuilder((testcase.getInteger("tl") / 1000)).toString()
                     );
 
                     processBuilder.redirectErrorStream(true);
