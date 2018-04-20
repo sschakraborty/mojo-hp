@@ -6,7 +6,7 @@ The Mini Online Judge Operator (MOJO) is a high performance **online coding judg
 The core of the judge is natively written on top of Linux kernel API (Linux 2.6+) and is developed and maintained by <a href="https://github.com/x0r19x91">@x0r19x91</a>. The core is asynchronous and highly capable of matching the speeds required for a performance critical distributed online judge.
 
 The latest version is MOJO 1.1.1. Works for high performance native core is in progress.
-These would make way in milestone release MOJO 1.2.0.
+These will be featured in milestone release MOJO 1.2.0.
 
 To use MOJO:
 <ul>
