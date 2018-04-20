@@ -27,6 +27,8 @@ public class Database {
             configPath = in.readLine();
             in.close();
 
+            Utility.init(configPath);
+
             FileInputStream fileInputStream = new FileInputStream(configPath);
             StringBuffer fileContent = new StringBuffer();
             BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream));

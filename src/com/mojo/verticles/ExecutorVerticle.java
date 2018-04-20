@@ -18,7 +18,7 @@ public class ExecutorVerticle extends AbstractVerticle {
     private final ExecutorService pool;
 
     public ExecutorVerticle() {
-        pool = Executors.newFixedThreadPool(4);
+        pool = Executors.newFixedThreadPool(Utility.getPoolSize());
     }
 
     public static String mapExtension(String lang) {

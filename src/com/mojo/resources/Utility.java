@@ -19,11 +19,13 @@ public class Utility {
     private static String SECRET_KEY = "";
     private static final Random random = new Random();
 
+    private static int poolSize;
+
     private static String JUDGE_FOLDER_PATH = "";
 
-    static {
+    protected static void init(String configPath) {
         try {
-            FileInputStream fileInputStream = new FileInputStream("./config.json");
+            FileInputStream fileInputStream = new FileInputStream(configPath);
             StringBuffer fileContent = new StringBuffer();
             BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream));
             String readContent;
@@ -36,6 +38,8 @@ public class Utility {
             JsonObject config = new JsonObject(fileContent.toString());
             SECRET_KEY = config.getJsonObject("security").getString("key");
             JUDGE_FOLDER_PATH = config.getJsonObject("judge").getString("test_folder");
+
+            poolSize = config.getJsonObject("judge").getInteger("pool_size");
         } catch(FileNotFoundException e) {
             System.err.println("Config file not found");
             System.exit(0);
@@ -62,6 +66,10 @@ public class Utility {
     
     public static String getSuccessMsg() {
         return SCC_MSG;
+    }
+
+    public static int getPoolSize() {
+        return poolSize;
     }
     
     public static String encrypt(String msg) {

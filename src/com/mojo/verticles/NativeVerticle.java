@@ -19,7 +19,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class NativeVerticle extends AbstractVerticle {
-    private static final ExecutorService pool = Executors.newFixedThreadPool(4);
+    private static final ExecutorService pool = Executors.newFixedThreadPool(Utility.getPoolSize());
 
     public static String mapExtension(String lang) {
         if(lang.equals("java8")) return ".java";
