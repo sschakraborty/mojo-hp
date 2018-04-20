@@ -20,6 +20,7 @@ public class Utility {
     private static final Random random = new Random();
 
     private static int poolSize;
+    private static String architecture;
 
     private static String JUDGE_FOLDER_PATH = "";
 
@@ -40,6 +41,7 @@ public class Utility {
             JUDGE_FOLDER_PATH = config.getJsonObject("judge").getString("test_folder");
 
             poolSize = config.getJsonObject("judge").getInteger("pool_size");
+            architecture = config.getJsonObject("judge").getString("architecture");
         } catch(FileNotFoundException e) {
             System.err.println("Config file not found");
             System.exit(0);
@@ -71,6 +73,8 @@ public class Utility {
     public static int getPoolSize() {
         return poolSize;
     }
+
+    public static String getArchitecture() { return architecture; }
     
     public static String encrypt(String msg) {
         msg += SECRET_KEY;

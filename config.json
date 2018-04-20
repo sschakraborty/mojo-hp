@@ -11,6 +11,7 @@
     },
     "judge": {
         "test_folder": "/home/sschakraborty/Documents/mojo-hp/Test"
-        "pool_size": 4
+        "pool_size": 4,
+        "architecture": "native"
     }
 }
