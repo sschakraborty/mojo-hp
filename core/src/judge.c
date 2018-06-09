@@ -1,1201 +1,1325 @@
-#ifndef _GNU_SOURCE
 #define _GNU_SOURCE
-#endif
 
-#include <stdio.h>
-#include <syscall.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdint.h>
-#include <sys/mman.h>
+#include <regex.h>
+#include <pthread.h>
 #include <sys/stat.h>
-#include <stdlib.h>
 #include <string.h>
-#include <dirent.h>
-#include <linux/random.h>
-#include <sys/time.h>
-#include <alloca.h>
-#include <getopt.h>
+#include <sys/syscall.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include <ctype.h>
 #include <sys/wait.h>
+#include <fcntl.h>
 #include <sys/resource.h>
-#include <sys/types.h>
-#include <regex.h>
+#include <stdint.h>
+#include <time.h>
+#include <sys/time.h>
+#include <math.h>
+#include <sys/times.h>
+#include <dirent.h>
+
+/* 20 ms granularity */
+
+#define MILLIS 1000000
+#define DELTA_SLEEP 20*MILLIS
+#define GRND_NONBLOCK 0x0001
+#define MAX_PATH 256
+#define ALPHABET_SIZE 37
+#define LOG(...) \
+    do { \
+        fprintf(stderr, "[+] "); \
+        fprintf(stderr, __VA_ARGS__); \
+        fflush(stderr); \
+    } while (0);
+#define ERR(...) \
+    do { \
+        fprintf(stderr, "[ERR] " __VA_ARGS__); \
+        fflush(stderr); \
+    } while (0);
 
 /*
- * Resource Limits
- */
-#define MAX_CHILDREN    2
-#define MAX_MEM         (256UL << 20)           /* MiB */
-#define MAX_LANG        10
-#define DEFINE_PROTO(func) char* func(uint32_t, char*, char*, char*)
-#define MAX(a,b)        ((a)>(b)?(a):(b))
-
-/*
- * Parameters
+ * The program displays logs per line preceded by "[+]"
+ * The last line contains -
+ *         [+] Status : <status-message-string>
  *
- * --path, -p   : Path to Source File
- * --output, -o : Path to Output Directory
- *      Output Directory contains all test cases outputs
- * --input, -i  : Path to Input Test Cases Directory
- * --lang       : Source Language
+ * the 'status-message-string' is a string from the array
+ * named 'status_msgs'.
  */
 
-DEFINE_PROTO(run_c);
-DEFINE_PROTO(run_cpp);
-DEFINE_PROTO(run_java);
-DEFINE_PROTO(run_py2);
-DEFINE_PROTO(run_py3);
-DEFINE_PROTO(run_ruby);
-
-extern int has_main_method(char* clazz_file);
-char* gen_temp_name();
-char* run_native_compiled(char** argv, uint32_t cpu_time, char* src, char* test_in, char* out);
-char* ruby(char** argv, char** compile, uint32_t cpu_time, char* src, char* test_in, char* out);
-void show_help(char* program);
-
-uint32_t PAGE_SIZE;
-
-struct lang_t
+/*
+ * List of Error Codes
+ */
+typedef enum
 {
-    char* ext;
-    char* (*exec)(uint32_t n_cpu, char* file, char* input, char* output);
+    JS_ACC,     /* Accepted */
+    JS_WRA,     /* Wrong Answer */
+    JS_CERR,    /* Compilation Error */
+    JS_MLE,     /* Memory Limit Exceeded */
+    JS_TLE,     /* Time Limit Exceeded */
+    JS_RTE,     /* Run Time Error */
+    JS_CTLE,    /* Compiler Time Limit Exceeded */
+    JS_CMLE,    /* Compiler Memory Limit Exceeded */
+    JS_OLE,     /* Output Limit Exceeded */
+    JS_NOCLAZZ, /* No Main Class Found */
+    JS_ELANG,   /* Language not Supported */
+} judge_status_t;
+
+char const* const status_msgs[] = {
+    "ACC", "WRA", "CERR", "MLE",
+    "TLE", "RTE", "CTLE", "CMLE",
+    "OLE", "ECLASS", "ELANG"
 };
 
-struct lang_t languages[] = {
-    "c", run_c,
-    "cpp", run_cpp,
-    "java8", run_java,
-    "py2", run_py2,
-    "py3", run_py3,
-    "rb", run_ruby,
-    0, 0, 0, 0
-};
+judge_status_t status;
+char* file_name;
+char* test_input_file;
+char* acc_output_file;
 char* temp_dir;
+char working_dir[MAX_PATH];
+double max_run_time = 10.0;
+double max_compile_time = 4.0;
+int64_t max_output_size = 5LL << 20;
+int64_t max_mem = 256LL << 20;
+int64_t max_rss = 20 << 20;
+int64_t max_stack = 20 << 20;
+int64_t max_compiler_mem = 256L << 20;
+int max_fork = 2;
+int kill_signal;
+int exit_code;
+int judge_pid;
+char* lang;
+uint64_t mem_used;
+double time_taken;
+extern char** environ;
+char alphabet[] = "vw0ua1tbs2cr3dqy4x_ep5fo6gn7hm8il9jkx";
 
-int main(int argc, char** argv)
+extern int has_main_method(char* file_name);
+
+uint64_t max(uint64_t a, uint64_t b)
 {
-    char* file;
-    char* input;
-    char* output;
-    char* lang;
-    char* program_name = *argv;
-    char** dummy[] = { &file, &output, &input, &lang, &temp_dir };
-    uint32_t cpu_time = 2;
-
-    if (argc == 1)
-        show_help(*argv);
-
-    PAGE_SIZE = sysconf(_SC_PAGE_SIZE);
-
-    int index;
-    while (1) {
-        struct option opts[] = {
-            "file", 1, 0, 0,
-            "output", 1, 0, 0,
-            "input", 1, 0, 0,
-            "lang", 1, 0, 0,
-            "temp", 1, 0, 0,
-            "cpu", 1, 0, 0,
-            "help", 0, 0, 0x1234,
-            0, 0, 0, 0
-        };
-        int ret = getopt_long(argc, argv, "d:f:o:i:l:n:h", opts, &index);
-        if (ret == -1)
-            break;
-        if (ret == 0x1234)
-            show_help(program_name);
-        if (ret == 0 && index <= 4) {
-            *dummy[index] = optarg;
-        }
-        if (index == 5 && ret == 0) {
-            sscanf(optarg, "%i", &cpu_time);
-        }
-        switch (ret) {
-            case 'd':
-                temp_dir = optarg;
-                break;
-            case 'f':
-                file = optarg;
-                break;
-            case 'n':
-                sscanf(optarg, "%i", &cpu_time);
-                break;
-            case 'h':
-                show_help(program_name);
-            case 'o':
-                output = optarg;
-                break;
-            case 'i':
-                input = optarg;
-                break;
-            case 'l':
-                lang = optarg;
-        }
-    }
-
-    printf("[INFO] Source Code : %s\n", file);
-    printf("[INFO] Test Case : %s\n", input);
-    printf("[INFO] Correct Output : %s\n", output);
-    printf("[INFO] Lang : %s\n", lang);
-
-    struct lang_t* l;
-    for (l = languages; l->ext; l++)
-        if (0 == strcmp(l->ext, lang))
-            break;
-
-    if (! l->ext) {
-        puts("[ERROR] Language not yet supported");
-        fflush(stdout);
-        exit(2);
-    }
-
-    if (cpu_time > 10)
-        cpu_time = 10;
-
-    printf("[INFO] CPU : %u\n", cpu_time);
-    puts(l->exec(cpu_time, file, input, output));
-    fflush(stdout);
-
-    exit(0);
+    uint64_t xa = (a), xb = (b);
+    return xa > xb ? xa : xb;
 }
 
-/*
- * Construct a temporary file path in /var/tmp
- */
-
-char* gen_temp_name()
+void g_sleep(long sec, long nsec)
 {
-    char* bin = NULL;
-    uint8_t buf[64];
-    bin = strdup(temp_dir);
-
-    int n_bytes = syscall(SYS_getrandom, buf, sizeof buf, GRND_NONBLOCK);
-    if (n_bytes == -1) {
-        fprintf(stderr, "[ERROR] getrandom : %m\n");
-        fflush(stderr);
-        exit(3);
-    }
-
-    static char char_set[] = "0123456789_abcdefghijklmnopqrstuvwxyz-";
-    for (int i = 0; i < n_bytes; ++i) {
-        asprintf(&bin, "%s%c", bin, char_set[buf[i] % sizeof(char_set)]);
-    }
-    return bin;
+    sec += nsec/1000000000;
+    nsec %= 1000000000;
+    struct timespec reqd = {.tv_sec = sec, .tv_nsec = nsec};
+    struct timespec rem = { 0, 0 };
+    do {
+        rem = reqd;
+    } while (nanosleep(&reqd, &rem));
 }
 
-
-/*
- * Return memory used by the process
- * text+data+stack
- */
-
-uint64_t parse_int(char* string, off_t* off)
+void set_exe_resources()
 {
-    uint64_t ans = 0;
-    off64_t pos = *off;
-    while (! isdigit(string[pos]))
-        ++pos;
-    while (isdigit(string[pos]))
-        ans = ans*10+string[pos++]-0x30;
-    *off = pos;
+    struct rlimit r = { max_fork, max_fork };
+    setrlimit(RLIMIT_NPROC, &r);
+    r.rlim_cur = r.rlim_max = max_rss;
+    setrlimit(RLIMIT_RSS, &r);
+    r.rlim_cur = r.rlim_max = max_stack;
+    setrlimit(RLIMIT_STACK, &r);
+    r.rlim_cur = r.rlim_max = max_mem;
+    setrlimit(RLIMIT_DATA, &r);
+}
+
+void set_compiler_resources()
+{
+    struct rlimit r;
+    r.rlim_cur = r.rlim_max = max_compiler_mem;
+    setrlimit(RLIMIT_DATA, &r);
+}
+
+int64_t get_vmem_size(int pid)
+{
+    kill(pid, SIGSTOP);
+
+    static char cmdLine[128];
+    static char line[256];
+    char *low_addr, *high_addr, *path;
+    char buf[32];
+
+    sprintf(buf, "/proc/%d/cmdline", pid);
+    FILE* stream = fopen(buf, "r");
+    if (! stream)
+        return 0;
+
+    fscanf(stream, "%[^\n]", cmdLine);
+    fclose(stream);
+
+    sprintf(buf, "/proc/%d/maps", pid);
+    stream = fopen(buf, "r");
+    if (! stream)
+        return 0;
+
+    int64_t ans = 0, low, high;
+    static char lookup[] = "0123456789abcdef";
+    while (! feof(stream))
+    {
+        fscanf(stream, "%[^\n]\n", line);
+        low = high = 0;
+        char* ptr = line;
+        for (; *ptr != '-'; ++ptr) {
+            low = (low<<4) + strchr(lookup, *ptr)-lookup;
+        }
+
+        for (; !isspace(*++ptr);)
+            high = (high<<4) + strchr(lookup, *ptr)-lookup;
+
+        for (; !strchr("/[", *++ptr); );
+        path = ptr;
+
+        char* base_name = strrchr(cmdLine, '/')+1;
+        ptr = strrchr(path, '/');
+
+        if (path && (!strcmp(path, "[heap]") ||
+            !strcmp(path, "[stack]") ||
+            ptr && !strcmp(ptr+1, base_name)))
+        {
+            ans += high-low+1;
+        }
+    }
+    fclose(stream);
     return ans;
 }
 
-uint64_t get_vm_size(pid_t pid)
+void gen_rand_string(char* buf, int size)
 {
-    char* path = NULL;
-    asprintf(&path, "/proc/%d/status", pid);
-
-    FILE* file = fopen(path, "r");
-    if (file == NULL)
-        return 0;
-
-    uint64_t text = 0, data = 0, stk = 0, tmp;
-    char ch;
-    int status = 0;
-    char buf[8] = "";
-    while ((ch = fgetc(file)) != -1 && status != 3)
+    int n = 0, s = size-1;
+    char* ptr = buf;
+    do {
+        n = syscall(SYS_getrandom, ptr, s, GRND_NONBLOCK);
+        if (n < 0) break;
+        ptr += n;
+        s -= n;
+    } while (s > 0);
+    for (int i = 0; i < size-1; ++i)
     {
-        if (ch == 'V')
-        {
-            ungetc(ch, file);
-            fscanf(file, "%s", buf);
-            if (strncmp(buf, "VmData", 6) == 0)
-            {
-                status++;
-                char c;
-                tmp = 0;
-                while (!isdigit(c = fgetc(file)));
-                do {
-                    tmp = tmp*10 + c-48;
-                } while (isdigit(c = fgetc(file)));
-                data = tmp;
-            }
-            else if (strncmp(buf, "VmExe", 5) == 0)
-            {
-                status++;
-                char c;
-                tmp = 0;
-                while (!isdigit(c = fgetc(file)));
-                do {
-                    tmp = tmp*10 + c-48;
-                } while (isdigit(c = fgetc(file)));
-                text = tmp;
-            }
-            else if (strncmp(buf, "VmStk", 5) == 0)
-            {
-                status++;
-                char c;
-                tmp = 0;
-                while (!isdigit(c = fgetc(file)));
-                do {
-                    tmp = tmp*10 + c-48;
-                } while (isdigit(c = fgetc(file)));
-                stk = tmp;
-            }
-        }
+        uint32_t ch = buf[i] & 0xff;
+        buf[i] = alphabet[ch % ALPHABET_SIZE];
     }
-
-    fclose(file);
-    return text+data+stk << 10;
+    buf[size-1] = 0;
 }
 
-
-/*
- * Run any native compiled language
- */
-
-char* run_native_compiled(char** args, uint32_t cpu, char* src, char* input, char* output)
+char* append_path(char* path, char* file)
 {
-    int fd[2];
-    struct stat st_buf;
-    int status;
+    int len = strlen(path);
+    char* ptr = path+len;
+    if (path[len-1] != '/')
+        *ptr++ = '/';
+    strcpy(ptr, file);
+    return path;
+}
 
-    if (pipe(fd) == -1) {
-        fprintf(stderr, "[ERROR] Pipe Failed !\n");
-        fflush(stderr);
-        return NULL;
+void initialize()
+{
+    char* ptr = stpcpy(working_dir, temp_dir);
+    if (ptr[-1] != '/')
+        *ptr++ = '/';
+    gen_rand_string(ptr, 32);
+    *(short*)(ptr+0x1f) = 0x2f;
+    mkdir(working_dir, 0700);
+}
+
+judge_status_t run_compiler(char* const* args)
+{
+    int out[2];
+    if (-1 == pipe(out)) {
+        ERR("pipe failed !");
+        return JS_RTE;
     }
 
-    char** ptr = args;
-    char* bin = NULL;
-    for (; *ptr; ++ptr)
+    int pid = fork();
+    if (-1 == pid)
     {
-        if (0 == strncmp(*ptr, "-o", 2))
-        {
-            bin = ptr[1];
-            break;
-        }
+        ERR("fork failed !");
+        close(out[0]);
+        close(out[1]);
+        return JS_RTE;
     }
-
-    pid_t pid = fork();
-    if (! pid)
+    else if (! pid)
     {
-        close(fd[0]);
-        dup2(fd[1], 1);
-        dup2(fd[1], 2);
+        close(0);
+        close(1);
+        close(out[0]);
+        dup2(out[1], 2);
+        set_compiler_resources();
         execve(args[0], args, environ);
     }
     else
     {
-        close(fd[1]);
-        waitpid(pid, &status, 0);
+        close(out[1]);
 
-        char temp;
-        int n_bytes = read(fd[0], &temp, 1);
-        close(fd[0]);
+        int ret, m_stat;
+        struct timeval start, end;
 
-        if (n_bytes > 0)
-            /* Compilation Error */
-            return "CERR";
+        kill(pid, SIGSTOP);
+        struct timeval start_time, end_time;
+
+        gettimeofday(&start_time, NULL);
+
+        do {
+            kill(pid, SIGCONT);
+            g_sleep(0, DELTA_SLEEP);
+            kill(pid, SIGSTOP);
+            ret = wait4(pid, &m_stat, WUNTRACED, NULL);
+            if (WIFEXITED(m_stat) || WIFSIGNALED(m_stat))
+                break;
+
+            gettimeofday(&end_time, NULL);
+            time_taken = end_time.tv_sec+1.0E-6*end_time.tv_usec-
+                start_time.tv_sec-1.0E-6*start_time.tv_usec;
+
+            int64_t ans = get_vmem_size(pid);
+            mem_used = max(mem_used, ans);
+        }
+        while(mem_used < max_compiler_mem && time_taken < max_compile_time);
+
+        LOG("Memory Used : %li bytes\n", mem_used);
+        LOG("Time Taken : %.6lf\n", time_taken);
+
+        if (mem_used >= max_compiler_mem || time_taken >= max_compile_time)
+        {
+            kill(pid, SIGTERM);
+            goto next;
+        }
+
+        static char m_buffer[256];
+        ret = read(out[0], m_buffer, sizeof m_buffer);
+        close(out[0]);
+
+        kill(pid, SIGKILL);
+        LOG("Err Stream <=> %.*s\n", ret, m_buffer);
+
+        if (memmem(m_buffer, ret, "memory", 6)
+            || mem_used > max_compiler_mem)
+            return JS_CMLE;
+
+next:
+        if (time_taken > max_compile_time)
+            return JS_CTLE;
+        else if (ret)
+            return JS_CERR;
+        else if (ret == 0)
+            return JS_ACC;
+        else
+            return JS_RTE;
     }
+}
 
-    if (-1 == pipe(fd))
-    {
-        fprintf(stderr, "[ERROR] Pipe Failed\n");
-        fflush(stderr);
-        return NULL;
-    }
+/*
+ * Judge C Programs
+ */
+void judge_c()
+{
+    static char exe_path[MAX_PATH];
+    static char output_file[MAX_PATH];
 
-    int test_case_fd = open(input, O_RDONLY);
-    if (test_case_fd == -1)
-    {
-        fprintf(stderr, "[ERROR] Test Case doesn't Exist\n");
-        fflush(stderr);
-        return NULL;
-    }
+    /* Compile the file now */
+    char const* compiler_args[] = {
+        "/usr/bin/gcc", "-o", exe_path, file_name,
+        "-w", "-lm", "-std=c11", NULL
+    };
 
-    pid = fork();
+    char* ptr = stpcpy(exe_path, working_dir);
+    gen_rand_string(ptr, 32);
+    ptr = stpcpy(output_file, working_dir);
+    gen_rand_string(ptr, 32);
+
+    LOG("Executable : %s\n", exe_path);
+    LOG("Output File : %s\n", output_file);
+
+    LOG("[ ... Compiling ... ]\n");
+    status = run_compiler((char * const*) compiler_args);
+
+    if (status != JS_ACC)
+        goto cleanup;
+
+    LOG("[ ... Executing ... ]\n");
+
+    int out_h = open(output_file, O_WRONLY | O_CREAT, 0666);
+    int in_h = open(test_input_file, O_RDONLY);
+    /* Execute the executable */
+    int pid = fork();
     if (! pid)
     {
-        close(fd[0]);
-        dup2(test_case_fd, 0);
-        dup2(fd[1], 1);
-        dup2(fd[1], 2);
+        dup2(in_h, 0);
+        dup2(out_h, 1);
+        dup2(out_h, 2);
 
-        struct rlimit lim;
-        lim.rlim_cur = lim.rlim_max = cpu;
-        prlimit(getpid(), RLIMIT_CPU, &lim, NULL);
+        chroot(working_dir);
 
-        lim.rlim_cur = lim.rlim_max = 3;
-        prlimit(getpid(), RLIMIT_NPROC, &lim, NULL);
-
-        lim.rlim_cur = lim.rlim_max = (1UL) << 20;
-        prlimit(getpid(), RLIMIT_STACK, &lim, NULL);
-
-        lim.rlim_cur = lim.rlim_max = (256UL) << 20;
-        prlimit(getpid(), RLIMIT_RSS, &lim, NULL);
-
-        char* args[] = { bin, NULL };
-        execve(args[0], args, NULL);
+        set_exe_resources();
+        char const* exe_args[] = { exe_path, NULL };
+        execve(exe_args[0], (char * const*) exe_args, NULL);
     }
     else
     {
-        close(fd[1]);
-        close(test_case_fd);
-        struct rusage usage = {0};
-        uint64_t mem_size = 0;
-        int ret;
+        close(in_h);
+        close(out_h);
+        /* All forks have same group id = pid of parent */
+        int ret, m_stat;
+        struct timeval start, end;
 
-        struct timeval s, e;
-        gettimeofday(&s, NULL);
+        kill(pid, SIGSTOP);
+        struct timeval start_time, end_time;
 
-        do
-        {
-            ret = waitpid(pid, &status, WNOHANG|WCONTINUED|WUNTRACED);
-            mem_size = MAX(mem_size, get_vm_size(pid));
-            gettimeofday(&e, NULL);
+        gettimeofday(&start_time, NULL);
+        time_taken = 0;
+        mem_used = 0;
+
+        do {
+            kill(pid, SIGCONT);
+            g_sleep(0, DELTA_SLEEP);
+            kill(pid, SIGSTOP);
+            ret = wait4(pid, &m_stat, WUNTRACED, NULL);
+            if (WIFEXITED(m_stat) || WIFSIGNALED(m_stat))
+                break;
+
+            gettimeofday(&end_time, NULL);
+            time_taken = end_time.tv_sec+1.0E-6*end_time.tv_usec-
+                start_time.tv_sec-1.0E-6*start_time.tv_usec;
+
+            int64_t ans = get_vmem_size(pid);
+            mem_used = max(mem_used, ans);
         }
-        while (ret != pid && mem_size <= MAX_MEM && e.tv_sec <= s.tv_sec+cpu);
+        while(mem_used < max_mem && time_taken < max_run_time);
 
-        printf("[INFO] Memory Consumed : %lu KiB\n", mem_size >> 10);
-        printf("[INFO] CPU : %li\n", e.tv_sec-s.tv_sec);
-        remove(bin);
+        LOG("Memory Used : %li bytes\n", mem_used);
+        LOG("Time Taken : %.6lf\n", time_taken);
+        LOG("Signal : %d\n", WTERMSIG(m_stat));
+        LOG("Exit Code : %d\n", WEXITSTATUS(m_stat));
+        kill(pid, SIGKILL);
 
-        if (mem_size > MAX_MEM)
+        if (mem_used > max_mem)
         {
-            close(fd[0]);
-            return "MLE";
+            status = JS_MLE;
+            goto cleanup;
         }
 
-        if (e.tv_sec > s.tv_sec+cpu)
+        if (time_taken > max_run_time)
         {
-            close(fd[0]);
-            return "TLE";
+            status = JS_TLE;
+            goto cleanup;
         }
 
-        if (WIFEXITED(status))
+        if (WIFSIGNALED(m_stat))
         {
-            int gen_out_fd = fd[0];
-
-            if (-1 == pipe(fd))
-            {
-                close(gen_out_fd);
-                fprintf(stderr, "[ERROR] Pipe Failed\n");
-                fflush(stderr);
-                return NULL;
-            }
-
-            pid = fork();
-            if (0 == pid)
-            {
-                dup2(gen_out_fd, 0);
-                close(fd[0]);
-                dup2(fd[1], 1);
-                dup2(1, 2);
-                char const* args[] = { "/usr/bin/diff", "--brief", output, "-", NULL };
-                execve(args[0], args, environ);
-            }
+            kill_signal = WTERMSIG(m_stat);
+            if (kill_signal == SIGKILL)
+                status = JS_MLE;
             else
-            {
-                close(fd[1]);
-                char temp;
-                waitpid(pid, &status, 0);
-                if (read(fd[0], &temp, 1) == 0)
-                    return "ACC";
-                else
-                    return "WRA";
-            }
-        }
-        else
-        {
-            int sig = WTERMSIG(status);
-            printf("[INFO] Killed By %d\n", sig);
-            fflush(stdout);
-            if (sig == SIGKILL)
-                return "TLE";
-            else
-                return "RTE";
-        }
-    }
-}
-
-
-/*
- * Run Python
- */
-
-char* python(char** args, char** compile_flags, uint32_t cpu, char* src, char* input, char* output)
-{
-    int in[2], fd[2];
-
-    if (compile_flags)
-    {
-        if (-1 == pipe(fd))
-        {
-            fprintf(stderr, "[ERROR] Pipe Failed\n");
-            fflush(stderr);
-            return NULL;
+                status = JS_RTE;
+            goto cleanup;
         }
 
-        pid_t pid = fork();
-        if (pid == 0)
+        /* Check Output Limits */
+        struct stat stat_buf;
+        stat(output_file, &stat_buf);
+
+        if (stat_buf.st_size > max_output_size)
         {
-            dup2(fd[1], 2);
-            close(fd[0]);
-            char* arg[] = { *args, "-mpy_compile", args[1], NULL };
-            execve(*args, arg, environ);
-        }
-        else
-        {
-            int status;
-            close(fd[1]);
-            waitpid(pid, &status, 0);
-
-            char buffer[1024];
-            int n;
-            n = read(fd[0], buffer, sizeof(buffer));
-            close(fd[0]);
-            if (n > 0)
-            {
-                printf("[ERROR_INFO] %.*s", n, buffer);
-                return "CERR";
-            }
-        }
-    }
-
-    if (-1 == pipe(in))
-    {
-        fprintf(stderr, "[ERROR] Pipe Failed\n");
-        fflush(stderr);
-        return NULL;
-    }
-
-    if (-1 == pipe(fd))
-    {
-        fprintf(stderr, "[ERROR] Pipe Failed\n");
-        fflush(stderr);
-        return NULL;
-    }
-
-    int file = open(input, 0);
-    if (file == -1)
-    {
-        close(fd[0]);
-        close(fd[1]);
-        close(in[0]);
-        close(in[1]);
-        fprintf(stderr, "[ERROR] File doesn't Exist\n");
-        fflush(stderr);
-        return NULL;
-    }
-
-    int pid = fork();
-    if (pid == 0)
-    {
-        close(in[0]);
-        close(fd[0]);
-        dup2(file, 0);
-        dup2(in[1], 1);
-        dup2(fd[1], 2);
-
-        struct rlimit lim;
-        lim.rlim_cur = lim.rlim_max = cpu;
-        prlimit(getpid(), RLIMIT_CPU, &lim, NULL);
-
-        lim.rlim_cur = lim.rlim_max = 3;
-        prlimit(getpid(), RLIMIT_NPROC, &lim, NULL);
-
-        lim.rlim_cur = lim.rlim_max = (1UL) << 20;
-        prlimit(getpid(), RLIMIT_STACK, &lim, NULL);
-
-        lim.rlim_cur = lim.rlim_max = (128UL) << 20;
-        prlimit(getpid(), RLIMIT_RSS, &lim, NULL);
-
-        execve(*args, args, environ);
-    }
-    else
-    {
-        close(fd[1]);
-        close(in[1]);
-
-        int ret, status;
-        uint64_t mem = 0;
-
-        struct timeval s, e;
-        gettimeofday(&s, NULL);
-
-        do
-        {
-            mem = MAX(mem, get_vm_size(pid));
-            ret = waitpid(pid, &status, WNOHANG|WCONTINUED|WUNTRACED);
-            gettimeofday(&e, NULL);
-        }
-        while (ret != pid && mem <= MAX_MEM && e.tv_sec <= s.tv_sec+cpu);
-
-        printf("[INFO] Memory : %llu KiB\n", mem >> 10);
-
-        if (mem > MAX_MEM)
-        {
-            close(in[0]);
-            return "MLE";
+            status = JS_OLE;
+            goto cleanup;
         }
 
-        if (e.tv_sec > s.tv_sec+cpu)
+        /* Proceed to diff */
+        int diff_out[2];
+        pipe(diff_out);
+
+        int diff_pid = fork();
+        if (! diff_pid)
         {
-            close(in[0]);
-            return "TLE";
-        }
-
-        if (WIFEXITED(status))
-        {
-            char* error_text = 0;
-            char temp_buffer[1024];
-            int count;
-            while ((count = read(fd[0], temp_buffer, sizeof(temp_buffer))) > 0)
-            {
-                if (error_text)
-                    asprintf(&error_text, "%s%.*s", error_text, count, temp_buffer);
-                else
-                    asprintf(&error_text, "%.*s", count, temp_buffer);
-            }
-            close(fd[0]);
-
-            if (error_text)
-            {
-                char error_expression[] = "^(.*Error)";
-                regex_t reg;
-                regmatch_t match;
-                printf("[ERROR_INFO] %s\n", error_text);
-
-                if (regcomp(&reg, error_expression, REG_EXTENDED|REG_NEWLINE))
-                {
-                    printf("[ERROR] regcomp");
-                    return NULL;
-                }
-
-                if (regexec(&reg, error_text, 1, &match, 0) == 0)
-                {
-                    int start = match.rm_so, end = match.rm_eo;
-                    regfree(&reg);
-
-                    if (strncmp("Syntax", error_text+start, 6) == 0)
-                        return "CERR";
-                    else
-                        return "RTE";
-                }
-
-                regfree(&reg);
-            }
-
-            if (pipe(fd) == -1)
-            {
-                fprintf(stderr, "[ERROR] Pipe failed\n");
-                fflush(stdout);
-                return NULL;
-            }
-
-            pid_t pid = fork();
-            if (pid == 0)
-            {
-                close(fd[0]);
-                dup2(fd[1], 1);
-                dup2(in[0], 0);
-                dup2(1, 2);
-                char* args[] = { "/usr/bin/diff", "--brief", output, "-", NULL };
-                execve(args[0], args, environ);
-            }
-            else
-            {
-                close(fd[1]);
-                char temp;
-                waitpid(pid, &status, 0);
-                if (read(fd[0], &temp, 1) == 0)
-                    return "ACC";
-                else
-                    return "WRA";
-            }
-        }
-        else
-        {
-            int sig = WTERMSIG(status);
-            if (sig == SIGKILL)
-                return "TLE";
-            else
-                return "RTE";
-        }
-    }
-}
-
-char* ruby(char** args, char** compile_flags, uint32_t cpu, char* src, char* input, char* output)
-{
-    int in[2], fd[2];
-
-    if (compile_flags)
-    {
-        if (-1 == pipe(fd))
-        {
-            fprintf(stderr, "[ERROR] Pipe Failed\n");
-            fflush(stderr);
-            return NULL;
-        }
-
-        fprintf(stdout, "[INFO] fd[%d, %d]\n", fd[0], fd[1]);
-        fprintf(stdout, "[INFO] Compiling ...\n");
-
-        pid_t pid = fork();
-        if (pid == 0)
-        {
-            close(fd[0]);
-            close(1);
             close(0);
-            dup2(fd[1], 2);
-
-            execve(*args, compile_flags, environ);
+            close(diff_out[0]);
+            dup2(diff_out[1], 1);
+            char const* diff_args[] = {
+                "/usr/bin/diff", "--brief",
+                output_file, acc_output_file, NULL
+            };
+            execve(diff_args[0], (char * const*) diff_args, environ);
         }
         else
         {
-            int status;
-            close(fd[1]);
-            waitpid(pid, &status, 0);
+            close(diff_out[1]);
+            LOG("[ ... Diffing ... ]\n");
+            waitpid(diff_pid, NULL, 0);
+            char byte;
+            int n_bytes = read(diff_out[0], &byte, 1);
+            close(diff_out[0]);
 
-            char buffer[1024];
-            int n;
-            n = read(fd[0], buffer, sizeof(buffer));
-            close(fd[0]);
-            if (n > 0)
-            {
-                printf("[ERROR_INFO] %.*s", n, buffer);
-                return "CERR";
-            }
+            if (n_bytes == 0)
+                status = JS_ACC;
+            else
+                status = JS_WRA;
         }
     }
 
-    if (-1 == pipe(in))
+cleanup:
     {
-        fprintf(stderr, "[ERROR] Pipe Failed\n");
-        fflush(stderr);
-        return NULL;
+        char* cmd = 0;
+        asprintf(&cmd, "rm -rf %s", working_dir);
+        system(cmd);
+        free(cmd);
+    }
+}
+
+/*
+ * C++ judge
+ */
+
+void judge_cpp()
+{
+    static char exe_path[MAX_PATH];
+    static char output_file[MAX_PATH];
+
+    /* Compile the file now */
+    char const* compiler_args[] = {
+        "/usr/bin/gcc", "-o", exe_path, file_name,
+        "-w", "-lm", "-lstdc++", "-std=c++14", NULL
+    };
+
+    char* ptr = stpcpy(exe_path, working_dir);
+    gen_rand_string(ptr, 32);
+    ptr = stpcpy(output_file, working_dir);
+    gen_rand_string(ptr, 32);
+
+    LOG("[ ... Compiling ... ]\n");
+    status = run_compiler((char * const*) compiler_args);
+
+    if (status != JS_ACC)
+        goto cleanup;
+
+    LOG("[ ... Executing ... ]\n");
+
+    int out_h = open(output_file, O_WRONLY | O_CREAT, 0666);
+    int in_h = open(test_input_file, O_RDONLY);
+    /* Execute the executable */
+    int pid = fork();
+    if (! pid)
+    {
+        dup2(in_h, 0);
+        dup2(out_h, 1);
+        dup2(out_h, 2);
+
+        /* Run in a Jail ! */
+        chroot(working_dir);
+
+        set_exe_resources();
+        char const* exe_args[] = { exe_path, NULL };
+        execve(exe_args[0], (char * const*) exe_args, NULL);
+    }
+    else
+    {
+        close(in_h);
+        close(out_h);
+        /* All forks have same group id = pid of parent */
+        int ret, m_stat;
+        struct timeval start, end;
+
+        kill(pid, SIGSTOP);
+        struct timeval start_time, end_time;
+
+        gettimeofday(&start_time, NULL);
+        time_taken = mem_used = 0;
+
+        do {
+            kill(pid, SIGCONT);
+            g_sleep(0, DELTA_SLEEP);
+            kill(pid, SIGSTOP);
+            ret = wait4(pid, &m_stat, WUNTRACED, NULL);
+            if (WIFEXITED(m_stat) || WIFSIGNALED(m_stat))
+                break;
+
+            gettimeofday(&end_time, NULL);
+            time_taken = end_time.tv_sec+1.0E-6*end_time.tv_usec-
+                start_time.tv_sec-1.0E-6*start_time.tv_usec;
+
+            int64_t ans = get_vmem_size(pid);
+            mem_used = max(mem_used, ans);
+        }
+        while(mem_used < max_mem && time_taken < max_run_time);
+
+        LOG("Memory Used : %li bytes\n", mem_used);
+        LOG("Time Taken : %.6lf\n", time_taken);
+        LOG("Signal : %d\n", WTERMSIG(m_stat));
+        LOG("Exit Code : %d\n", WEXITSTATUS(m_stat));
+        kill(pid, SIGKILL);
+
+        if (mem_used > max_mem)
+        {
+            status = JS_MLE;
+            goto cleanup;
+        }
+
+        if (time_taken > max_run_time)
+        {
+            status = JS_TLE;
+            goto cleanup;
+        }
+
+        if (WIFSIGNALED(m_stat))
+        {
+            kill_signal = WTERMSIG(m_stat);
+            if (kill_signal == SIGKILL)
+                status = JS_MLE;
+            else
+                status = JS_RTE;
+            goto cleanup;
+        }
+
+        /* Check Output Limits */
+        struct stat stat_buf;
+        stat(output_file, &stat_buf);
+
+        if (stat_buf.st_size > max_output_size)
+        {
+            status = JS_OLE;
+            goto cleanup;
+        }
+
+        /* Proceed to diff */
+        int diff_out[2];
+        pipe(diff_out);
+
+        int diff_pid = fork();
+        if (! diff_pid)
+        {
+            close(0);
+            close(diff_out[0]);
+            dup2(diff_out[1], 1);
+            char const* diff_args[] = {
+                "/usr/bin/diff", "--brief",
+                output_file, acc_output_file, NULL
+            };
+            execve(diff_args[0], (char * const*) diff_args, environ);
+        }
+        else
+        {
+            close(diff_out[1]);
+            LOG("[ ... Diffing ... ]\n");
+            waitpid(diff_pid, NULL, 0);
+            char byte;
+            int n_bytes = read(diff_out[0], &byte, 1);
+            close(diff_out[0]);
+
+            if (n_bytes == 0)
+                status = JS_ACC;
+            else
+                status = JS_WRA;
+        }
     }
 
-    if (-1 == pipe(fd))
+cleanup:
     {
-        fprintf(stderr, "[ERROR] Pipe Failed\n");
-        fflush(stderr);
-        return NULL;
+        char* cmd = 0;
+        asprintf(&cmd, "rm -rf %s", working_dir);
+        system(cmd);
+        free(cmd);
+    }
+}
+
+/*
+ * Java Judge
+ */
+
+void judge_java()
+{
+    static char output_file[MAX_PATH];
+    static char stderr_file[MAX_PATH];
+    char* clazz_file = 0;
+
+    /* Compile the file now */
+    char const* compiler_args[] = {
+        "/usr/bin/javac", "-d", working_dir, file_name, NULL
+    };
+
+    char const* executor_args[] = {
+        "/usr/bin/java", "-Xmx256M",
+        "-cp", working_dir, NULL, NULL
+    };
+
+    char* ptr = stpcpy(output_file, working_dir);
+    gen_rand_string(ptr, 32);
+    ptr = stpcpy(stderr_file, working_dir);
+    gen_rand_string(ptr, 32);
+
+    max_compiler_mem = RLIM_INFINITY;
+    LOG("[ ... Compiling ... ]\n");
+    status = run_compiler((char * const*) compiler_args);
+
+    if (status != JS_ACC)
+        goto cleanup;
+
+    DIR* directory = opendir(working_dir);
+    struct dirent* entry;
+    int found_main_class = 0;
+
+    while (entry = readdir(directory))
+    {
+        if (entry->d_type == DT_REG)
+        {
+            asprintf(&clazz_file, "%s%s", working_dir, entry->d_name);
+            if (has_main_method(clazz_file))
+            {
+                found_main_class = 1;
+                break;
+            }
+            free(clazz_file);
+        }
     }
 
-    int file = open(input, 0);
-    if (file == -1)
+    if (! found_main_class)
     {
-        fprintf(stderr, "[ERROR] File doesn't Exist\n");
-        fflush(stderr);
-        return NULL;
+        status = JS_NOCLAZZ;
+        goto cleanup;
     }
 
-    printf("[INFO] in[%d, %d], fd[%d, %d]\n", in[0], in[1], fd[0], fd[1]);
+    char* clazz = strdup(entry->d_name);
+    LOG("[ ... %s ... ] \n", clazz);
+    closedir(directory);
+
+    int out_h = open(output_file, O_WRONLY | O_CREAT, 0666);
+    int in_h = open(test_input_file, O_RDONLY);
+    int err_h = open(stderr_file, O_WRONLY|O_CREAT, 0666);
+
+    /* Execute the executable */
+    int pid = fork();
+    if (! pid)
+    {
+        dup2(in_h, 0);
+        dup2(out_h, 1);
+        dup2(err_h, 2);
+
+        max_fork = -1;
+        *strchr(clazz, '.') = 0;
+
+        executor_args[4] = clazz;
+        set_exe_resources();
+        execve(executor_args[0], (char* const*)executor_args, NULL);
+    }
+    else
+    {
+        close(in_h);
+        close(out_h);
+        close(err_h);
+
+        int ret, m_stat;
+        struct timeval start, end;
+
+        kill(pid, SIGSTOP);
+        struct timeval start_time, end_time;
+
+        gettimeofday(&start_time, NULL);
+        time_taken = 0;
+        mem_used = 0;
+
+        do {
+            kill(pid, SIGCONT);
+            g_sleep(0, DELTA_SLEEP);
+            kill(pid, SIGSTOP);
+
+            ret = wait4(pid, &m_stat, WUNTRACED, NULL);
+            gettimeofday(&end_time, NULL);
+
+            if (WIFEXITED(m_stat) || WIFSIGNALED(m_stat))
+                break;
+
+            time_taken = end_time.tv_sec+1.0E-6*end_time.tv_usec-
+                start_time.tv_sec-1.0E-6*start_time.tv_usec;
+
+            struct timeval tmp_s, tmp_e;
+
+            gettimeofday(&tmp_s, 0);
+            int64_t ans = get_vmem_size(pid);
+            mem_used = max(mem_used, ans);
+            gettimeofday(&tmp_e, 0);
+
+            time_taken -= tmp_e.tv_sec+1.0E-6*tmp_e.tv_usec-
+                tmp_s.tv_sec-1.0E-6*tmp_s.tv_usec;
+        }
+        while(mem_used <= max_mem && time_taken <= max_run_time);
+
+        LOG("Memory Consumed : %lu bytes\n", mem_used);
+        LOG("Time Taken : %.6lf\n", time_taken);
+        LOG("Signal : %d\n", WTERMSIG(m_stat));
+        LOG("Exit Code : %d\n", WEXITSTATUS(m_stat));
+        kill(pid, SIGKILL);
+
+        if (mem_used > max_mem)
+        {
+            status = JS_MLE;
+            goto cleanup;
+        }
+
+        if (time_taken > max_run_time)
+        {
+            status = JS_TLE;
+            goto cleanup;
+        }
+
+        if (WIFSIGNALED(m_stat))
+        {
+            kill_signal = WTERMSIG(m_stat);
+            if (kill_signal == SIGKILL)
+                status = JS_MLE;
+            else
+                status = JS_RTE;
+            goto cleanup;
+        }
+
+        /* Check for Exceptions */
+        static char except_regex[] = "Exception in thread \"\\w+\" .*";
+        static char e_buffer[1024];
+        regex_t reg;
+        regmatch_t match;
+
+        int fd = open(stderr_file, O_RDONLY);
+        int n_bytes = read(fd, e_buffer, sizeof e_buffer);
+        close(fd);
+        e_buffer[n_bytes] = 0;
+
+        regcomp(&reg, except_regex, REG_EXTENDED|REG_NEWLINE);
+        if (regexec(&reg, e_buffer, 1, &match, 0) == 0)
+        {
+            regfree(&reg);
+            LOG("Err Stream <==> %.*s\n", n_bytes, e_buffer);
+            status = JS_RTE;
+            goto cleanup;
+        }
+        regfree(&reg);
+
+        if (strstr(e_buffer, "Not enough space"))
+        {
+            LOG("Err Stream <==> %.*s\n", n_bytes, e_buffer);
+            status = JS_MLE;
+            goto cleanup;
+        }
+
+        /* Check Output Limits */
+        struct stat stat_buf;
+        stat(output_file, &stat_buf);
+
+        if (stat_buf.st_size > max_output_size)
+        {
+            status = JS_OLE;
+            goto cleanup;
+        }
+
+        /* Proceed to diff */
+        int diff_out[2];
+        pipe(diff_out);
+
+        int diff_pid = fork();
+        if (! diff_pid)
+        {
+            close(0);
+            close(diff_out[0]);
+            dup2(diff_out[1], 1);
+            char const* diff_args[] = {
+                "/usr/bin/diff", "--brief",
+                output_file, acc_output_file, NULL
+            };
+            execve(diff_args[0], (char * const*) diff_args, environ);
+        }
+        else
+        {
+            close(diff_out[1]);
+            LOG("[ ... Diffing ... ]\n");
+            waitpid(diff_pid, NULL, 0);
+            char byte;
+            int n_bytes = read(diff_out[0], &byte, 1);
+            close(diff_out[0]);
+
+            if (n_bytes == 0)
+                status = JS_ACC;
+            else
+                status = JS_WRA;
+        }
+    }
+
+cleanup:
+    {
+        char* cmd = 0;
+        asprintf(&cmd, "rm -rf %s", working_dir);
+        system("if [ -f \"*.log\" ]; then rm hs*.log; fi");
+        system(cmd);
+        free(cmd);
+    }
+}
+
+/*
+ * Python judge
+ */
+
+void judge_python()
+{
+    static char src_path[MAX_PATH];
+    static char output_file[MAX_PATH];
+    char interpreter[] = "/usr/bin/python2";
+
+    /* Compile the file now */
+    const char* compiler_args[] = {
+        interpreter, "-O", "-m",
+        "py_compile", src_path, NULL
+    };
+
+    if (lang[2] == '3')
+        interpreter[15] = '3';
+
+    char* ptr = stpcpy(src_path, working_dir);
+    gen_rand_string(ptr, 16);
+    ptr = stpcpy(output_file, working_dir);
+    gen_rand_string(ptr, 16);
+
+    /* Copy the source file */
+    int fd_out = open(src_path, O_WRONLY | O_CREAT, 0666);
+    int fd_in = open(file_name, O_RDONLY);
+    struct stat t_fstat;
+    fstat(fd_in, &t_fstat);
+    copy_file_range(fd_in, NULL, fd_out, NULL, t_fstat.st_size, 0);
+    close(fd_in);
+    close(fd_out);
+
+    LOG("[ ... Compiling ... ]\n");
+
+    chdir(working_dir);
+    status = run_compiler((char * const*) compiler_args);
+
+    if (status != JS_ACC)
+        goto cleanup;
+
+    LOG("[ ... Executing ... ]\n");
+
+    int out_h = open(output_file, O_WRONLY | O_CREAT, 0666);
+    int in_h = open(test_input_file, O_RDONLY);
+    /* Execute the executable */
+    int pid = fork();
+    if (! pid)
+    {
+        dup2(in_h, 0);
+        dup2(out_h, 1);
+        dup2(out_h, 2);
+
+        /* Run in a Jail ! */
+        chroot(working_dir);
+
+        set_exe_resources();
+        char const* exe_args[] = { compiler_args[0], src_path, NULL };
+        execve(exe_args[0], (char * const*) exe_args, NULL);
+    }
+    else
+    {
+        close(in_h);
+        close(out_h);
+        /* All forks have same group id = pid of parent */
+        int ret, m_stat;
+        struct timeval start, end;
+
+        kill(pid, SIGSTOP);
+        struct timeval start_time, end_time;
+
+        gettimeofday(&start_time, NULL);
+        time_taken = mem_used = 0;
+
+        do {
+            kill(pid, SIGCONT);
+            g_sleep(0, DELTA_SLEEP);
+            kill(pid, SIGSTOP);
+            ret = wait4(pid, &m_stat, WUNTRACED, NULL);
+            if (WIFEXITED(m_stat) || WIFSIGNALED(m_stat))
+                break;
+
+            gettimeofday(&end_time, NULL);
+            time_taken = (end_time.tv_sec*1000.0+end_time.tv_usec/1000.0-
+                start_time.tv_sec*1000.0-start_time.tv_usec/1000.0)/1000.0;
+
+            int64_t ans = get_vmem_size(pid);
+            mem_used = max(mem_used, ans);
+        }
+        while(mem_used < max_mem && time_taken < max_run_time);
+
+        LOG("Memory Used : %li bytes\n", mem_used);
+        LOG("Time Taken : %.6lf\n", time_taken);
+        LOG("Signal : %d\n", WTERMSIG(m_stat));
+        LOG("Exit Code : %d\n", WEXITSTATUS(m_stat));
+        kill(pid, SIGKILL);
+
+        if (mem_used > max_mem)
+        {
+            status = JS_MLE;
+            goto cleanup;
+        }
+
+        if (time_taken > max_run_time)
+        {
+            status = JS_TLE;
+            goto cleanup;
+        }
+
+        if (WIFSIGNALED(m_stat))
+        {
+            kill_signal = WTERMSIG(m_stat);
+            if (kill_signal == SIGKILL)
+                status = JS_MLE;
+            else
+                status = JS_RTE;
+            goto cleanup;
+        }
+
+        static char except_regex[] = "^(.*)Error.*";
+        static char e_buffer[1024];
+        regex_t reg;
+        regmatch_t match;
+
+        int fd = open(output_file, O_RDONLY);
+        int n_bytes = read(fd, e_buffer, sizeof e_buffer);
+        close(fd);
+        e_buffer[n_bytes] = 0;
+
+        regcomp(&reg, except_regex, REG_EXTENDED|REG_NEWLINE);
+        if (regexec(&reg, e_buffer, 1, &match, 0) == 0)
+        {
+            LOG("Err Stream <==> %.*s\n", n_bytes, e_buffer);
+            int start = match.rm_so, end = match.rm_eo;
+            regfree(&reg);
+            if (strncmp("Memory", e_buffer+start, 6) == 0)
+            {
+                status = JS_MLE;
+            }
+            else
+            {
+                status = JS_RTE;
+            }
+            goto cleanup;
+        }
+        regfree(&reg);
+
+        /* Check Output Limits */
+        struct stat stat_buf;
+        stat(output_file, &stat_buf);
+
+        if (stat_buf.st_size > max_output_size)
+        {
+            status = JS_OLE;
+            goto cleanup;
+        }
+
+        /* Proceed to diff */
+        int diff_out[2];
+        pipe(diff_out);
+
+        int diff_pid = fork();
+        if (! diff_pid)
+        {
+            close(0);
+            close(diff_out[0]);
+            dup2(diff_out[1], 1);
+            char const* diff_args[] = {
+                "/usr/bin/diff", "--brief",
+                output_file, acc_output_file, NULL
+            };
+            execve(diff_args[0], (char * const*) diff_args, environ);
+        }
+        else
+        {
+            close(diff_out[1]);
+            LOG("[ ... Diffing ... ]\n");
+            waitpid(diff_pid, NULL, 0);
+            char byte;
+            int n_bytes = read(diff_out[0], &byte, 1);
+            close(diff_out[0]);
+
+            if (n_bytes == 0)
+                status = JS_ACC;
+            else
+                status = JS_WRA;
+        }
+    }
+
+cleanup:
+    {
+        char* cmd = 0;
+        asprintf(&cmd, "rm -rf %s", working_dir);
+        system(cmd);
+        free(cmd);
+    }
+}
+
+
+/*
+ * Ruby judge
+ */
+
+void judge_ruby()
+{
+    static char src_path[MAX_PATH];
+    static char output_file[MAX_PATH];
+
+    /* Compile the file now */
+    char const* compiler_args[] = {
+        "/usr/bin/ruby", "-c", src_path, NULL
+    };
+
+    char* ptr = stpcpy(src_path, working_dir);
+    gen_rand_string(ptr, 16);
+    ptr = stpcpy(output_file, working_dir);
+    gen_rand_string(ptr, 16);
+
+    LOG("Executable : %s\n", src_path);
+    LOG("Output File : %s\n", output_file);
+
+    /* Copy the source file */
+    int fd_out = open(src_path, O_WRONLY | O_CREAT, 0666);
+    int fd_in = open(file_name, O_RDONLY);
+    struct stat t_fstat;
+    fstat(fd_in, &t_fstat);
+    copy_file_range(fd_in, NULL, fd_out, NULL, t_fstat.st_size, 0);
+    close(fd_in);
+    close(fd_out);
+
+    LOG("[ ... Compiling ... ]\n");
+
+    chdir(working_dir);
+    status = run_compiler((char * const*) compiler_args);
+
+    if (status != JS_ACC)
+        goto cleanup;
+
+    LOG("[ ... Executing ... ]\n");
+
+    int out_h = open(output_file, O_WRONLY | O_CREAT, 0666);
+    int in_h = open(test_input_file, O_RDONLY);
+
+    /* Execute the executable */
 
     int pid = fork();
-    if (pid == 0)
+    if (! pid)
     {
-        close(in[0]);
-        close(fd[0]);
-        dup2(file, 0);
-        dup2(in[1], 1);
-        dup2(fd[1], 2);
+        dup2(in_h, 0);
+        dup2(out_h, 1);
+        dup2(out_h, 2);
 
-        struct rlimit lim;
-        lim.rlim_cur = lim.rlim_max = cpu;
-        prlimit(getpid(), RLIMIT_CPU, &lim, NULL);
-
-        lim.rlim_cur = lim.rlim_max = (1UL) << 20;
-        prlimit(getpid(), RLIMIT_STACK, &lim, NULL);
-
-        lim.rlim_cur = lim.rlim_max = (128UL) << 20;
-        prlimit(getpid(), RLIMIT_RSS, &lim, NULL);
-
-        execve(*args, args, NULL);
+        /* Run in a Jail ! */
+        chroot(working_dir);
+        max_fork = -1;
+        set_exe_resources();
+        char const* exe_args[] = { compiler_args[0], src_path, NULL };
+        execve(exe_args[0], (char * const*) exe_args, NULL);
     }
     else
     {
-        close(file);
-        close(in[1]);
-        close(fd[1]);
+        close(in_h);
+        close(out_h);
+        /* All forks have same group id = pid of parent */
+        int ret, m_stat;
+        struct timeval start, end;
 
-        int ret, status;
-        uint64_t mem = 0;
+        kill(pid, SIGSTOP);
+        struct timeval start_time, end_time;
 
-        struct timeval s, e;
-        gettimeofday(&s, NULL);
+        gettimeofday(&start_time, NULL);
+        time_taken = mem_used = 0;
 
-        do
-        {
-            mem = MAX(mem, get_vm_size(pid));
-            ret = waitpid(pid, &status, WNOHANG|WCONTINUED|WUNTRACED);
-            gettimeofday(&e, NULL);
+        do {
+            kill(pid, SIGCONT);
+            g_sleep(0, DELTA_SLEEP);
+            kill(pid, SIGSTOP);
+            ret = wait4(pid, &m_stat, WUNTRACED, NULL);
+            if (WIFEXITED(m_stat) || WIFSIGNALED(m_stat))
+                break;
+
+            gettimeofday(&end_time, NULL);
+            time_taken = (end_time.tv_sec*1000.0+end_time.tv_usec/1000.0-
+                start_time.tv_sec*1000.0-start_time.tv_usec/1000.0)/1000.0;
+
+            int64_t ans = get_vmem_size(pid);
+            mem_used = max(mem_used, ans);
         }
-        while (ret != pid && mem <= MAX_MEM && e.tv_sec <= s.tv_sec+cpu);
+        while(mem_used < max_mem && time_taken < max_run_time);
 
-        printf("[INFO] Memory : %lu KiB\n", mem >> 10);
-        printf("[INFO] CPU : %li\n", e.tv_sec-s.tv_sec);
+        LOG("Memory Used : %li bytes\n", mem_used);
+        LOG("Time Taken : %.6lf\n", time_taken);
+        LOG("Signal : %d\n", WTERMSIG(m_stat));
+        LOG("Exit Code : %d\n", WEXITSTATUS(m_stat));
+        kill(pid, SIGKILL);
 
-        if (mem > MAX_MEM)
+        if (mem_used > max_mem)
         {
-            close(in[0]);
-            return "MLE";
+            status = JS_MLE;
+            goto cleanup;
         }
 
-        if (e.tv_sec > s.tv_sec+cpu)
+        if (time_taken > max_run_time)
         {
-            close(in[0]);
-            return "TLE";
+            status = JS_TLE;
+            goto cleanup;
         }
 
-        if (WIFEXITED(status))
+        if (WIFSIGNALED(m_stat))
         {
-            // Check Error Stream for any error
-            char* error_text = 0;
-            char temp_buffer[1024];
-            int count;
-            while ((count = read(fd[0], temp_buffer, sizeof(temp_buffer))) > 0)
+            kill_signal = WTERMSIG(m_stat);
+            if (kill_signal == SIGKILL)
+                status = JS_MLE;
+            else
+                status = JS_RTE;
+            goto cleanup;
+        }
+
+        static char except_regex[] = "[!\\(]*\\([^E]*Error.*";
+        static char e_buffer[1024];
+        regex_t reg;
+        regmatch_t match;
+
+        int fd = open(output_file, O_RDONLY);
+        int n_bytes = read(fd, e_buffer, sizeof e_buffer);
+        close(fd);
+        e_buffer[n_bytes] = 0;
+
+        regcomp(&reg, except_regex, REG_EXTENDED|REG_NEWLINE);
+        if (regexec(&reg, e_buffer, 1, &match, 0) == 0)
+        {
+            LOG("Err Stream <==> %.*s\n", n_bytes, e_buffer);
+            int start = match.rm_so, end = match.rm_eo;
+            regfree(&reg);
+
+            if (strncmp("NoMemoryError", e_buffer+start+1, 13) == 0)
             {
-                if (error_text)
-                    asprintf(&error_text, "%s%.*s", error_text, count, temp_buffer);
-                else
-                    asprintf(&error_text, "%.*s", count, temp_buffer);
-            }
-
-            close(fd[0]);
-
-            if (error_text)
-            {
-                char error_expression[] = "^(.*Error)(.*)";
-                regex_t reg;
-                regmatch_t match;
-                printf("[ERROR_INFO] %s\n", error_text);
-
-                if (regcomp(&reg, error_expression, REG_EXTENDED|REG_NEWLINE))
-                {
-                    printf("[ERROR] regcomp");
-                    return NULL;
-                }
-
-                if (regexec(&reg, error_text, 1, &match, 0) == 0)
-                {
-                    int start = match.rm_so, end = match.rm_eo;
-                    regfree(&reg);
-
-                    return "RTE";
-                }
-
-                regfree(&reg);
-            }
-
-            pid_t pid = fork();
-            if (pid == 0)
-            {
-                close(fd[0]);
-                dup2(fd[1], 1);
-                dup2(in[0], 0);
-                dup2(1, 2);
-                char* args[] = { "/usr/bin/diff", "--brief", output, "-", NULL };
-                execve(args[0], args, environ);
+                status = JS_MLE;
             }
             else
             {
-                close(fd[1]);
-                char temp;
-                waitpid(pid, &status, 0);
-                if (read(fd[0], &temp, 1) == 0)
-                    return "ACC";
-                else
-                    return "WRA";
+                status = JS_RTE;
             }
+            goto cleanup;
+        }
+        regfree(&reg);
+
+        /* Check Output Limits */
+        struct stat stat_buf;
+        stat(output_file, &stat_buf);
+
+        if (stat_buf.st_size > max_output_size)
+        {
+            status = JS_OLE;
+            goto cleanup;
+        }
+
+        /* Proceed to diff */
+        int diff_out[2];
+        pipe(diff_out);
+
+        int diff_pid = fork();
+        if (! diff_pid)
+        {
+            close(0);
+            close(diff_out[0]);
+            dup2(diff_out[1], 1);
+            char const* diff_args[] = {
+                "/usr/bin/diff", "--brief",
+                output_file, acc_output_file, NULL
+            };
+            execve(diff_args[0], (char * const*) diff_args, environ);
         }
         else
         {
-            int sig = WTERMSIG(status);
-            if (sig == SIGKILL)
-                return "TLE";
+            close(diff_out[1]);
+            LOG("[ ... Diffing ... ]\n");
+            waitpid(diff_pid, NULL, 0);
+            char byte;
+            int n_bytes = read(diff_out[0], &byte, 1);
+            close(diff_out[0]);
+
+            if (n_bytes == 0)
+                status = JS_ACC;
             else
-                return "RTE";
+                status = JS_WRA;
         }
     }
-}
 
-
-/*
- * Judge a C program
- */
-char* run_c(uint32_t cpu, char* src, char* input, char* output)
-{
-    char* bin = gen_temp_name();
-    char* args[] = {
-        "/usr/bin/gcc",
-        "-O2", "-w",
-        "-std=c11",
-        "-D_ONLINE_JUDGE_=1",
-        "-o",
-        bin, src, "-lm", NULL
-    };
-    char* res = run_native_compiled(args, cpu, src, input, output);
-    free(bin);
-    return res;
-}
-
-/*
- * Judge C++ program
- */
-
-char* run_cpp(uint32_t cpu, char* src, char* input, char* output)
-{
-    char* bin = gen_temp_name();
-    char* args[] = {
-        "/usr/bin/gcc",
-        "-O2", "-w", "-std=c++14",
-        "-D_ONLINE_JUDGE_=1", "-o", bin,
-        src, "-lm", "-lstdc++", NULL
-    };
-    char* res = run_native_compiled(args, cpu, src, input, output);
-    free(bin);
-    return res;
-}
-
-/*
- * Judge a Java program
- */
-
-char* run_java(uint32_t cpu, char* src, char* input, char* output)
-{
-    /*
-     * Create a unique directory in /var/tmp
-     * unlike creating a new file in other languages
-     */
-    char* dir_path = gen_temp_name();
-    if (mkdir(dir_path, 0775) == -1)
+cleanup:
     {
-        fprintf(stderr, "[ERROR] mkdir failed !\n");
-        fflush(stderr);
-        return NULL;
-    }
-
-    printf("[INFO] Dir Path : %s\n", dir_path);
-
-    int fd[2];
-    if (pipe(fd) == -1)
-    {
-        rmdir(dir_path);
-        free(dir_path);
-        fprintf(stderr, "[ERROR] pipe failed!\n");
-        fflush(stderr);
-        return NULL;
-    }
-
-    pid_t pid = fork();
-    if (pid == 0)
-    {
-        close(fd[0]);
-        dup2(fd[1], 1);
-        dup2(fd[1], 2);
-
-        char* args[] = { "/usr/bin/javac", "-d", dir_path, src, NULL };
-        execve(*args, args, NULL);
-    }
-    else
-    {
-        int status;
-        close(fd[1]);
-
-        if (-1 == waitpid(pid, &status, 0))
-        {
-            rmdir(dir_path);
-            free(dir_path);
-            close(fd[0]);
-            fprintf(stderr, "[ERROR] waitpid failed!\n");
-            fflush(stderr);
-            return NULL;
-        }
-
-        if (WIFSIGNALED(status))
-        {
-            rmdir(dir_path);
-            free(dir_path);
-            close(fd[0]);
-            fprintf(stderr, "[COMPILER] Killed By %d", WTERMSIG(status));
-            fflush(stderr);
-            return NULL;
-        }
-
-        char temp;
-        int n_bytes = read(fd[0], &temp, 1);
-        close(fd[0]);
-        if (n_bytes >= 1)
-        {
-            rmdir(dir_path);
-            free(dir_path);
-            return "CERR";
-        }
-
-        /*
-         * If the control reaches here, it implies
-         * that the source is successfully compiled with class files
-         * present in $dir_path
-         */
-
-        /*
-         * Now since a java program can have atleast one class
-         * in a single file, we have to find the class that has
-         * a method of the following signature
-         *
-         * public static void main(String[] argv);
-         *
-         */
-
-        char *ptr, *main_class = NULL;
-        DIR* dir = opendir(dir_path);
-
-        if (dir == NULL)
-        {
-            char* rm_cmd = NULL;
-            asprintf(&rm_cmd, "rm -r %s", dir_path);
-            system(rm_cmd);
-            free(rm_cmd);
-            fprintf(stderr, "[ERROR] diropen failed!\n");
-            fflush(stderr);
-            return NULL;
-        }
-
-        struct dirent* entry;
-        while (entry = readdir(dir))
-        {
-            if ((ptr = strrchr(entry->d_name, '.')) && strncmp(ptr+1, "class", 5) == 0)
-            {
-                char* path_file = NULL;
-                asprintf(&path_file, "%s/%s", dir_path, entry->d_name);
-
-                if (has_main_method(path_file))
-                {
-                    char* ptr = strrchr(entry->d_name, '.');
-                    asprintf(&main_class, "%.*s", (int) (ptr-entry->d_name), entry->d_name);
-                    break;
-                }
-
-                free(path_file);
-            }
-        }
-
-        closedir(dir);
-
-        if (main_class == NULL)
-        {
-            /* No Runnable Classes */
-            char* rm_cmd = NULL;
-            asprintf(&rm_cmd, "rm -r %s", dir_path);
-            system(rm_cmd);
-            free(rm_cmd);
-            return "EMAIN";
-        }
-
-        printf("[INFO] Main Class : %s\n", main_class);
-
-        /*
-         * Now that we have the main class, lets try running it
-         * Giving 256 MiB to the JVM ...
-         */
-        const uint64_t JVM_MAX_MEM = (256UL << 20) + MAX_MEM;
-
-        if (pipe(fd) == -1)
-        {
-            fprintf(stderr, "[ERROR] pipe failed!\n");
-            fflush(stderr);
-            return NULL;
-        }
-
-        int test_case_fd = open(input, 0);
-        pid_t pid = fork();
-
-        if (pid == 0)
-        {
-            close(fd[0]);
-            dup2(test_case_fd, 0);
-            dup2(fd[1], 1);
-            dup2(1, 2);
-
-            struct rlimit lim;
-
-            lim.rlim_cur = lim.rlim_max = cpu;
-            if (-1 == prlimit(pid, RLIMIT_CPU, &lim, NULL)) {
-                printf("[Error] RLIMIT_CPU : %m\n");
-                exit(1);
-            }
-
-            chdir(dir_path);
-            char* args[] = { "/usr/bin/java", "-Xms128m", "-Xmx128m", main_class, NULL };
-            execve(*args, args, NULL);
-        }
-        else
-        {
-            close(fd[1]);
-            int ret;
-            char* cmd = NULL;
-            asprintf(&cmd, "cat /proc/%d/statm", pid);
-            uint64_t mem = 0;
-            do
-            {
-                ret = waitpid(pid, &status, WNOHANG|WUNTRACED);
-                //if (WIFEXITED(status) || WIFSIGNALED(status))
-                //  break;
-                system(cmd);
-                mem = get_vm_size(pid);
-                system(cmd);
-                printf("[Info] Memory : %lu\n", mem/PAGE_SIZE);
-            } while (!ret && mem <= JVM_MAX_MEM);
-
-            printf("[INFO] Memory Consumed : %lu\n", mem);
-            printf("[JVM] Max Memory : %lu\n", JVM_MAX_MEM);
-
-            if (mem > JVM_MAX_MEM)
-            {
-                close(fd[0]);
-                char* rm_cmd = NULL;
-                asprintf(&rm_cmd, "rm -r %s", dir_path);
-                system(rm_cmd);
-                free(rm_cmd);
-                return "MLE";
-            }
-
-            if (WIFEXITED(status))
-            {
-                int out_fd = fd[0];
-
-                if (pipe(fd) == -1)
-                {
-                    fprintf(stderr, "[ERROR] pipe failed!\n");
-                    fflush(stderr);
-                    close(out_fd);
-                    char* rm_cmd = NULL;
-                    asprintf(&rm_cmd, "rm -r %s", dir_path);
-                    system(rm_cmd);
-                    free(rm_cmd);
-                    return NULL;
-                }
-
-                pid_t diff_pid = fork();
-                if (diff_pid == 0)
-                {
-                    close(fd[0]);
-                    dup2(fd[1], 1);
-                    dup2(1, 2);
-                    dup2(out_fd, 0);
-
-                    char* diff_args[] = { "/usr/bin/diff", "--brief", "-", output, NULL };
-                    execve(*diff_args, diff_args, environ);
-                }
-                else
-                {
-                    close(fd[1]);
-                    close(out_fd);
-
-                    if (waitpid(diff_pid, &status, 0) == -1)
-                    {
-                        fprintf(stderr, "[ERROR] waitpid failed!\n");
-                        fflush(stderr);
-                        char* rm_cmd = NULL;
-                        asprintf(&rm_cmd, "rm -r %s", dir_path);
-                        system(rm_cmd);
-                        free(rm_cmd);
-                        return NULL;
-                    }
-
-                    if (WIFSIGNALED(status))
-                    {
-                        char* rm_cmd = NULL;
-                        asprintf(&rm_cmd, "rm -r %s", dir_path);
-                        system(rm_cmd);
-                        free(dir_path);
-                        close(fd[0]);
-                        fprintf(stderr, "[CHECKER] Killed By %d", WTERMSIG(status));
-                        fflush(stderr);
-                        return NULL;
-                    }
-
-                    char temp;
-                    int n_bytes = read(fd[0], &temp, 1);
-                    close(fd[0]);
-
-                    char* rm_cmd = NULL;
-                    asprintf(&rm_cmd, "rm -r %s", dir_path);
-                    //system(rm_cmd);
-                    free(dir_path);
-
-                    if (n_bytes == 0)
-                        return "ACC";
-                    else
-                        return "WRA";
-                }
-            }
-            else
-            {
-                int sig = WTERMSIG(status);
-                if (sig == SIGKILL)
-                    return "TLE";
-                else
-                    return "RTE";
-            }
-        }
+        char* cmd = 0;
+        asprintf(&cmd, "rm -rf %s", working_dir);
+        system(cmd);
+        free(cmd);
     }
 }
 
 
-char* run_py2(uint32_t cpu, char* src, char* input, char* output)
-{
-    char* args[] = { "/usr/bin/python2", src, NULL };
-    char* compile[] = { "-m py_compile", src, NULL };
-    char* res = python(args, compile, cpu, src, input, output);
-    return res;
-}
-
-
-char* run_py3(uint32_t cpu, char* src, char* input, char* output)
-{
-    char* args[] = { "/usr/bin/python3", src, NULL };
-    char* compile[] = { "-m py_compile", src, NULL };
-    char* res = python(args, compile, cpu, src, input, output);
-    return res;
-}
-
-
-char* run_ruby(uint32_t cpu, char* src, char* input, char* output)
-{
-    char* args[] = { "/usr/bin/ruby", src, NULL };
-    char* cmd[] = { "-c", src, NULL };
-    char* res = ruby(args, cmd, cpu, src, input, output);
-    return res;
-}
-
-__attribute__((noreturn))
-void show_help(char* prog)
+void show_usage(char* prog_name)
 {
     printf(
-            "Usage : %s [options]\n"
-            "\t--path, -p\t: Path of source file\n"
-            "\t--input, -i\t: Path of test case\n"
-            "\t--output, -o\t: Path of correct answer\n"
-            "\t--lang, -l\t: Language of source code\n"
-            "\t--cpu, -n\t: Time Limit (in seconds)\n"
-            "\n\t--help, -h\t: Show this message\n",
-            prog
-          );
+        "Usage : %s [options]\n\n"
+        "    -f    Source code file\n"
+        "    -i    Test Input file\n"
+        "    -o    Correct Output file\n"
+        "    -l    Language Extension\n"
+        "    -d    Working directory\n"
+        "    -r    Max. Execution time (sec)\n"
+        "    -c    Max. Compilation time (sec)\n",
+        prog_name
+    );
     exit(0);
+}
+
+
+int main(int argc, char** argv)
+{
+    int ret;
+    while ((ret = getopt(argc, argv, "f:i:o:l:d:r:c:h::")) != -1)
+    {
+        switch (ret)
+        {
+            case 'f':
+                file_name = optarg;
+                break;
+            case 'i':
+                test_input_file = optarg;
+                break;
+            case 'o':
+                acc_output_file = optarg;
+                break;
+            case 'l':
+                lang = optarg;
+                break;
+            case 'd':
+                temp_dir = optarg;
+                break;
+            case 'c':
+                max_compile_time = strtol(optarg, NULL, 10);
+                break;
+            case 'r':
+                max_run_time = strtol(optarg, NULL, 10);
+                break;
+            default:
+                show_usage(*argv);
+        }
+    }
+
+    initialize();
+
+    intptr_t* maps[] = {
+        (intptr_t*) "c",     (intptr_t*) judge_c,
+        (intptr_t*) "cpp",   (intptr_t*) judge_cpp,
+        (intptr_t*) "java",  (intptr_t*) judge_java,
+        (intptr_t*) "py2",   (intptr_t*) judge_python,
+        (intptr_t*) "py3",   (intptr_t*) judge_python,
+        (intptr_t*) "rb",    (intptr_t*) judge_ruby,
+        NULL
+    };
+
+    intptr_t* search_ptr = (intptr_t*) maps;
+    for (; *search_ptr; search_ptr += 2)
+        if (0 == strcmp((char*)*search_ptr, lang))
+            break;
+
+    if (search_ptr)
+        ((void (*)()) search_ptr[1])();
+    else
+        status = JS_ELANG;
+
+    LOG("Status : %s\n", status_msgs[status]);
 }
