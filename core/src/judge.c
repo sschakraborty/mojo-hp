@@ -141,10 +141,12 @@ int64_t get_vmem_size(int pid)
     char *low_addr, *high_addr, *path;
     char buf[32];
 
+    int64_t ans = 0;
+
     sprintf(buf, "/proc/%d/cmdline", pid);
     FILE* stream = fopen(buf, "r");
     if (! stream)
-        return 0;
+        goto finish;
 
     fscanf(stream, "%[^\n]", cmdLine);
     fclose(stream);
@@ -152,9 +154,9 @@ int64_t get_vmem_size(int pid)
     sprintf(buf, "/proc/%d/maps", pid);
     stream = fopen(buf, "r");
     if (! stream)
-        return 0;
+        goto finish;
 
-    int64_t ans = 0, low, high;
+    int64_t low, high;
     static char lookup[] = "0123456789abcdef";
     while (! feof(stream))
     {
@@ -182,6 +184,9 @@ int64_t get_vmem_size(int pid)
         }
     }
     fclose(stream);
+
+finish:
+    kill(pid, SIGCONT);
     return ans;
 }
 
