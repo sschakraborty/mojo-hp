@@ -82,7 +82,6 @@ public class NativeVerticle extends AbstractVerticle {
                     );
 
                     processBuilder.redirectErrorStream(true);
-                    processBuilder.directory(dir);
 
                     Process p = processBuilder.start();
                     p.waitFor(10000, TimeUnit.MILLISECONDS);
@@ -122,11 +121,12 @@ public class NativeVerticle extends AbstractVerticle {
                     }
                 });
             } catch(FileNotFoundException e) {
-                // System.err.println("File was not found");
+                System.err.println("File was not found");
             } catch(IOException e) {
-                // System.err.println("IO error");
+                System.err.println("IO error");
+                e.printStackTrace();
             } catch(InterruptedException e) {
-                // System.err.println("Internal error");
+                System.err.println("Internal error");
             }
         }
     }

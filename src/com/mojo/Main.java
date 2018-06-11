@@ -22,31 +22,31 @@ public class Main {
             v.deployVerticle(new HttpVerticle(), (e) -> {
                 if (e.succeeded()) {
                     System.out.println("Successfully deployed HTTP Interface");
+
+                    if(Utility.getArchitecture().equalsIgnoreCase("native")) {
+                        v.deployVerticle(new NativeVerticle(), (et) -> {
+                            if (et.succeeded()) {
+                                System.out.println("Successfully deployed Native Judge");
+                            } else {
+                                System.err.println(e.cause().getMessage());
+                            }
+                        });
+                    } else if(Utility.getArchitecture().equalsIgnoreCase("vanilla")) {
+                        v.deployVerticle(new ExecutorVerticle(), (et) -> {
+                            if (et.succeeded()) {
+                                System.out.println("Successfully deployed Vanilla Judge");
+                            } else {
+                                System.err.println(e.cause().getMessage());
+                            }
+                        });
+                    } else {
+                        System.err.println("Architecture not recognized");
+                        System.exit(0);
+                    }
                 } else {
                     System.err.println(e.cause().getMessage());
                 }
             });
-
-            if(Utility.getArchitecture().equalsIgnoreCase("native")) {
-                v.deployVerticle(new NativeVerticle(), (e) -> {
-                    if (e.succeeded()) {
-                        System.out.println("Successfully deployed native Judge");
-                    } else {
-                        System.err.println(e.cause().getMessage());
-                    }
-                });
-            } else if(Utility.getArchitecture().equalsIgnoreCase("vanilla")) {
-                v.deployVerticle(new ExecutorVerticle(), (e) -> {
-                    if (e.succeeded()) {
-                        System.out.println("Successfully deployed vanilla Judge");
-                    } else {
-                        System.err.println(e.cause().getMessage());
-                    }
-                });
-            } else {
-                System.err.println("Architecture not recognized");
-                System.exit(0);
-            }
         } else {
             // Verticle deployment errors
             System.err.println("Error in Main class: Verticles could not be deployed");
