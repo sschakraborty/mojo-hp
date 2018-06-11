@@ -10,7 +10,7 @@
         "key": "FTgf29TgDFg^%$3$%^fcDFG"
     },
     "judge": {
-        "test_folder": "/home/sschakraborty/Documents/mojo-hp/Test"
+        "test_folder": "/home/sschakraborty/Documents/mojo-hp/Test",
         "pool_size": 4,
         "architecture": "native"
     }

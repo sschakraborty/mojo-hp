@@ -31,7 +31,10 @@ public class NativeVerticle extends AbstractVerticle {
 
     public static String mapCoreExtension(String lang) {
         if(lang.equals("py2") || lang.equals("py3")) return lang;
-        else return mapExtension(lang);
+        else if(lang.equals("c99")) return "c";
+        else if(lang.equals("cpp14")) return "cpp";
+        else if(lang.equals("java8")) return "java";
+        else return "generic";
     }
 
     private class Job implements Runnable {
@@ -66,15 +69,16 @@ public class NativeVerticle extends AbstractVerticle {
                 fout.close();
 
                 // Calling native core from Process API
-                String msg = "ACC";
+                String msg = "GERR";
                 for(JsonObject testcase : testcases) {
                     ProcessBuilder processBuilder = new ProcessBuilder("./core/obj/judge",
-                            "-d", dirPath,
                             "-f", filePath,
-                            "-l", mapCoreExtension(lang),
                             "-i", testcase.getString("in_path"),
                             "-o", testcase.getString("out_path"),
-                            "-n", new StringBuilder((testcase.getInteger("tl") / 1000)).toString()
+                            "-l", mapCoreExtension(lang),
+                            "-d", dirPath,
+                            "-r", new StringBuilder((testcase.getInteger("tl") / 1000)).toString(),
+                            "-c", "4"
                     );
 
                     processBuilder.redirectErrorStream(true);
@@ -83,11 +87,15 @@ public class NativeVerticle extends AbstractVerticle {
                     Process p = processBuilder.start();
                     p.waitFor(10000, TimeUnit.MILLISECONDS);
 
-                    String str = new BufferedReader(new InputStreamReader(p.getInputStream())).readLine();
-                    if(!str.equalsIgnoreCase("ACC")) {
-                        msg = str;
-                        break;
+                    BufferedReader inStream = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                    String temp = null;
+                    while((temp = inStream.readLine()) != null && temp.length() > 0) {
+                        if(temp.startsWith("[+] Status : ")) {
+                            msg = temp.substring("[+] Status : ".length());
+                            break;
+                        }
                     }
+                    inStream.close();
                 }
 
                 final String resultMsg = msg;
