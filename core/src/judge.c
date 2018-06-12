@@ -1267,13 +1267,14 @@ void show_usage(char* prog_name)
 {
     printf(
         "Usage : %s [options]\n\n"
-        "    -f    Source code file\n"
-        "    -i    Test Input file\n"
-        "    -o    Correct Output file\n"
-        "    -l    Language Extension\n"
-        "    -d    Working directory\n"
-        "    -r    Max. Execution time (sec)\n"
-        "    -c    Max. Compilation time (sec)\n",
+        "  -f    Source code file\n"
+        "  -i    Test Input file\n"
+        "  -o    Correct Output file\n"
+        "  -l    Language Extension\n"
+        "  -d    Working directory\n"
+        "  -r    Max. Execution time (sec)\n"
+        "  -c    Max. Compilation time (sec)\n\n"
+        "  -h    Show this help message\n",
         prog_name
     );
     exit(0);
@@ -1283,35 +1284,46 @@ void show_usage(char* prog_name)
 int main(int argc, char** argv)
 {
     int ret;
+    int mask = 0;
     while ((ret = getopt(argc, argv, "f:i:o:l:d:r:c:h::")) != -1)
     {
         switch (ret)
         {
             case 'f':
                 file_name = optarg;
+                mask |= 1;
                 break;
             case 'i':
                 test_input_file = optarg;
+                mask |= 2;
                 break;
             case 'o':
                 acc_output_file = optarg;
+                mask |= 4;
                 break;
             case 'l':
                 lang = optarg;
+                mask |= 8;
                 break;
             case 'd':
                 temp_dir = optarg;
+                mask |= 64;
                 break;
             case 'c':
                 max_compile_time = strtol(optarg, NULL, 10);
+                mask |= 16;
                 break;
             case 'r':
                 max_run_time = strtol(optarg, NULL, 10);
+                mask |= 32;
                 break;
             default:
                 show_usage(*argv);
         }
     }
+
+    if (mask != 127 && mask != 63)
+        show_usage(*argv);
 
     initialize();
 
