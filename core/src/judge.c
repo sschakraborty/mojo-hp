@@ -24,7 +24,7 @@
 #define MILLIS 1000000
 #define DELTA_SLEEP 20*MILLIS
 #define GRND_NONBLOCK 0x0001
-#define MAX_PATH 256
+#define MAX_PATH PATH_MAX
 #define ALPHABET_SIZE 37
 #define LOG(...) \
     do { \
@@ -71,6 +71,7 @@ char const* const status_msgs[] = {
     "OLE", "ECLASS", "ELANG"
 };
 
+int created_by_me;
 judge_status_t status;
 char* file_name;
 char* test_input_file;
@@ -220,6 +221,15 @@ char* append_path(char* path, char* file)
 
 void initialize()
 {
+    static char cur_dir[MAX_PATH];
+    if (temp_dir == NULL) {
+        getcwd(cur_dir, sizeof cur_dir);
+        temp_dir = "_temp_";
+        char* ptr = cur_dir;
+        for (; *ptr; ++ptr);
+        strncpy(ptr, "./_temp_", 8);
+    }
+    created_by_me = !mkdir(temp_dir, 0700);
     char* ptr = stpcpy(working_dir, temp_dir);
     if (ptr[-1] != '/')
         *ptr++ = '/';
@@ -1326,4 +1336,6 @@ int main(int argc, char** argv)
         status = JS_ELANG;
 
     LOG("Status : %s\n", status_msgs[status]);
+    if (created_by_me)
+        rmdir(temp_dir);
 }
