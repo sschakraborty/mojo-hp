@@ -291,7 +291,7 @@ judge_status_t run_compiler(char* const* args)
             goto next;
         }
 
-        static char m_buffer[256];
+        static char m_buffer[1024];
         ret = read(out[0], m_buffer, sizeof m_buffer);
         close(out[0]);
 
@@ -890,7 +890,6 @@ void judge_python()
 
     LOG("[ ... Compiling ... ]\n");
 
-    chdir(working_dir);
     status = run_compiler((char * const*) compiler_args);
 
     if (status != JS_ACC)
