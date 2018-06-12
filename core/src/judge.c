@@ -28,9 +28,9 @@
 #define ALPHABET_SIZE 37
 #define LOG(...) \
     do { \
-        fprintf(stderr, "[+] "); \
-        fprintf(stderr, __VA_ARGS__); \
-        fflush(stderr); \
+        fprintf(stdout, "[+] "); \
+        fprintf(stdout, __VA_ARGS__); \
+        fflush(stdout); \
     } while (0);
 #define ERR(...) \
     do { \
