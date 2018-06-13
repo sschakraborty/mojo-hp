@@ -3,7 +3,7 @@
 
 # check for config file
 
-echo "MOJO: Mini Online Judge Operator v1.1.1"
+echo "MOJO: Mini Online Judge Operator v1.2.0"
 echo "Please wait while MOJO boots up..."
 
 if [ -e "LICENSE" -a -e "mojo-hp.sql" ]
