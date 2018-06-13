@@ -69,32 +69,32 @@ public class NativeVerticle extends AbstractVerticle {
                 fout.close();
 
                 // Calling native core from Process API
-                String msg = "GERR";
+                String msg = "ACC";
                 for(JsonObject testcase : testcases) {
-                    ProcessBuilder processBuilder = new ProcessBuilder("./core/obj/judge",
+                    ProcessBuilder processBuilder = new ProcessBuilder("core/obj/judge",
                             "-f", filePath,
                             "-i", testcase.getString("in_path"),
                             "-o", testcase.getString("out_path"),
                             "-l", mapCoreExtension(lang),
                             "-d", dirPath,
-                            "-r", new StringBuilder((testcase.getInteger("tl") / 1000)).toString(),
+                            "-r", (testcase.getInteger("tl") / 1000) + "",
                             "-c", "4"
                     );
 
                     processBuilder.redirectErrorStream(true);
-
                     Process p = processBuilder.start();
                     p.waitFor(10000, TimeUnit.MILLISECONDS);
 
                     BufferedReader inStream = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                    String temp = null;
-                    while((temp = inStream.readLine()) != null && temp.length() > 0) {
+                    String temp;
+                    while((temp = inStream.readLine()) != null) {
                         if(temp.startsWith("[+] Status : ")) {
-                            msg = temp.substring("[+] Status : ".length());
-                            break;
+                            temp = temp.substring("[+] Status : ".length());
+                            if(!temp.equals("ACC")) {
+                                msg = temp;
+                            }
                         }
                     }
-                    inStream.close();
                 }
 
                 final String resultMsg = msg;
