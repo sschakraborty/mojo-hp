@@ -10,20 +10,20 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="file://$MODULE_DIR$/../development/vertx-35/lib" />
+          <root url="jar://$MODULE_DIR$/../development/mysql-connector-java-5.1.42/mysql-connector-java-5.1.42-bin.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
-        <jarDirectory url="file://$MODULE_DIR$/../development/vertx-35/lib" recursive="false" />
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../development/mysql-connector-java-5.1.42/mysql-connector-java-5.1.42-bin.jar!/" />
+          <root url="file://$MODULE_DIR$/../development/vertx-352/lib" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/../development/vertx-352/lib" recursive="false" />
       </library>
     </orderEntry>
   </component>

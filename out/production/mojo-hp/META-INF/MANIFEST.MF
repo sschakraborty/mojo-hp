@@ -1,53 +1,56 @@
 Manifest-Version: 1.0
-Class-Path: bson-3.4.1.jar guava-19.0.jar kryo-3.0.3.jar c3p0-0.9.5.2.
- jar minlog-1.3.0.jar rxjava-1.3.2.jar rxjava-2.1.3.jar objenesis-2.1.
- jar httpcore-4.4.6.jar rxgroovy-1.0.3.jar hazelcast-3.8.2.jar proton-
- j-0.22.0.jar vertx-jwt-3.5.0.jar vertx-web-3.5.0.jar aether-api-1.1.0
- .jar aether-spi-1.1.0.jar annotations-13.0.jar groovy-all-2.4.7.jar h
- ttpclient-4.5.3.jar vertx-core-3.5.0.jar vertx-sync-3.5.0.jar vertx-u
- nit-3.5.0.jar aether-impl-1.1.0.jar aether-util-1.1.0.jar amqp-client
- -3.6.5.jar bcpg-jdk15on-1.54.jar commons-codec-1.9.jar maven-model-3.
- 1.0.jar mvel2-2.3.1.Final.jar reflectasm-1.10.1.jar vertx-rx-js-3.5.0
- .jar vertx-stomp-3.5.0.jar HdrHistogram-2.1.9.jar jackson-core-2.9.0.
- jar metrics-core-3.1.2.jar vertx-config-3.5.0.jar vertx-docgen-3.5.0.
- jar vertx-proton-3.5.0.jar bcprov-jdk15on-1.54.jar plexus-utils-3.0.1
- 0.jar vertx-codegen-3.5.0.jar vertx-lang-js-3.5.0.jar vertx-rx-java-3
- .5.0.jar kotlin-stdlib-1.1.51.jar vertx-auth-jwt-3.5.0.jar vertx-rx-j
- ava2-3.5.0.jar commons-logging-1.1.1.jar kotlin-reflect-1.1.51.jar kr
- yo-serializers-0.37.jar vertx-auth-jdbc-3.5.0.jar vertx-codetrans-3.5
- .0.jar vertx-hazelcast-3.5.0.jar vertx-lang-ruby-3.5.0.jar vertx-rx-g
- roovy-3.5.0.jar jackson-databind-2.9.0.jar quasar-core-0.7.5-jdk8.jar
-  reactive-streams-1.0.1.jar vertx-sql-common-3.5.0.jar vertx-web-clie
- nt-3.5.0.jar vertx-web-common-3.5.0.jar jruby-complete-9.1.13.0.jar v
- ertx-amqp-bridge-3.5.0.jar vertx-auth-common-3.5.0.jar vertx-auth-oau
- th2-3.5.0.jar vertx-jdbc-client-3.5.0.jar vertx-lang-groovy-3.5.0.jar
-  vertx-lang-kotlin-3.5.0.jar vertx-mail-client-3.5.0.jar netty-codec-
- 4.1.15.Final.jar vertx-mongo-client-3.5.0.jar vertx-redis-client-3.5.
- 0.jar jackson-annotations-2.9.0.jar kotlin-stdlib-jre7-1.1.51.jar kot
- lin-stdlib-jre8-1.1.51.jar maven-model-builder-3.1.0.jar mongodb-driv
- er-core-3.4.1.jar netty-buffer-4.1.15.Final.jar netty-common-4.1.15.F
- inal.jar plexus-interpolation-1.16.jar vertx-bridge-common-3.5.0.jar 
- vertx-consul-client-3.5.0.jar vertx-service-proxy-3.5.0.jar vertx-sta
- ck-manager-3.5.0.jar mongodb-driver-async-3.4.1.jar netty-handler-4.1
- .15.Final.jar vertx-consul-service-3.5.0.jar aether-transport-file-1.
- 1.0.jar aether-transport-http-1.1.0.jar maven-aether-provider-3.1.0.j
- ar mchange-commons-java-0.2.11.jar netty-resolver-4.1.15.Final.jar ve
- rtx-circuit-breaker-3.5.0.jar vertx-rabbitmq-client-3.5.0.jar vertx-s
- ervice-factory-3.5.0.jar aether-connector-basic-1.1.0.jar netty-codec
- -dns-4.1.15.Final.jar netty-transport-4.1.15.Final.jar vertx-reactive
- -streams-3.5.0.jar netty-codec-http-4.1.15.Final.jar vertx-service-di
- scovery-3.5.0.jar kotlinx-coroutines-core-0.19.1.jar netty-codec-http
- 2-4.1.15.Final.jar netty-codec-socks-4.1.15.Final.jar vertx-dropwizar
- d-metrics-3.5.0.jar maven-repository-metadata-3.1.0.jar netty-resolve
- r-dns-4.1.15.Final.jar vertx-tcp-eventbus-bridge-3.5.0.jar netty-hand
- ler-proxy-4.1.15.Final.jar vertx-http-service-factory-3.5.0.jar vertx
- -lang-kotlin-compiler-3.5.0.jar kotlin-compiler-embeddable-1.1.51.jar
-  vertx-maven-service-factory-3.5.0.jar vertx-web-templ-jade-3.5.0-sha
- ded.jar vertx-web-templ-mvel-3.5.0-shaded.jar vertx-lang-kotlin-corou
- tines-3.5.0.jar vertx-web-templ-thymeleaf-3.5.0-shaded.jar vertx-web-
- templ-handlebars-3.5.0-shaded.jar netty-transport-native-epoll-4.1.15
- .Final.jar netty-transport-native-kqueue-4.1.15.Final.jar netty-tcnat
- ive-boringssl-static-2.0.6.Final.jar netty-transport-native-unix-comm
- on-4.1.15.Final.jar mysql-connector-java-5.1.42-bin.jar
+Class-Path: mysql-connector-java-5.1.42-bin.jar bson-3.6.1.jar guava-1
+ 9.0.jar kryo-3.0.3.jar c3p0-0.9.5.2.jar minlog-1.3.0.jar rxjava-1.3.5
+ .jar rxjava-2.1.9.jar objenesis-2.1.jar httpcore-4.4.6.jar rxgroovy-1
+ .0.3.jar hazelcast-3.8.2.jar proton-j-0.25.0.jar vertx-jwt-3.5.2.jar 
+ vertx-web-3.5.2.jar aether-api-1.1.0.jar aether-spi-1.1.0.jar annotat
+ ions-13.0.jar httpclient-4.5.3.jar opentest4j-1.1.0.jar vertx-core-3.
+ 5.2.jar vertx-sync-3.5.2.jar vertx-unit-3.5.2.jar aether-impl-1.1.0.j
+ ar aether-util-1.1.0.jar amqp-client-3.6.5.jar bcpg-jdk15on-1.54.jar 
+ commons-codec-1.9.jar groovy-all-2.4.15.jar maven-model-3.1.0.jar mve
+ l2-2.3.1.Final.jar reflectasm-1.10.1.jar vertx-rx-js-3.5.2.jar vertx-
+ stomp-3.5.2.jar jackson-core-2.9.5.jar metrics-core-4.0.2.jar vertx-c
+ onfig-3.5.2.jar vertx-docgen-0.9.1.jar vertx-junit5-3.5.2.jar vertx-p
+ roton-3.5.2.jar HdrHistogram-2.1.10.jar bcprov-jdk15on-1.54.jar plexu
+ s-utils-3.0.10.jar vertx-codegen-3.5.2.jar vertx-lang-js-3.5.2.jar ve
+ rtx-rx-java-3.5.2.jar kotlin-stdlib-1.2.20.jar vertx-auth-jwt-3.5.2.j
+ ar vertx-rx-java2-3.5.2.jar apiguardian-api-1.0.0.jar commons-logging
+ -1.1.1.jar kotlin-reflect-1.2.20.jar kryo-serializers-0.37.jar vertx-
+ auth-jdbc-3.5.2.jar vertx-codetrans-3.5.2.jar vertx-hazelcast-3.5.2.j
+ ar vertx-lang-ruby-3.5.2.jar vertx-rx-groovy-3.5.2.jar jackson-databi
+ nd-2.9.5.jar quasar-core-0.7.5-jdk8.jar reactive-streams-1.0.2.jar ve
+ rtx-sql-common-3.5.2.jar vertx-web-client-3.5.2.jar vertx-web-common-
+ 3.5.2.jar jruby-complete-9.1.13.0.jar junit-jupiter-api-5.2.0.jar ver
+ tx-amqp-bridge-3.5.2.jar vertx-auth-common-3.5.2.jar vertx-auth-oauth
+ 2-3.5.2.jar vertx-jdbc-client-3.5.2.jar vertx-lang-groovy-3.5.2.jar v
+ ertx-lang-kotlin-3.5.2.jar vertx-mail-client-3.5.2.jar netty-codec-4.
+ 1.19.Final.jar vertx-mongo-client-3.5.2.jar vertx-redis-client-3.5.2.
+ jar jackson-annotations-2.9.5.jar kotlin-stdlib-jre7-1.2.20.jar kotli
+ n-stdlib-jre8-1.2.20.jar maven-model-builder-3.1.0.jar mongodb-driver
+ -core-3.6.1.jar netty-buffer-4.1.19.Final.jar netty-common-4.1.19.Fin
+ al.jar plexus-interpolation-1.16.jar vertx-bridge-common-3.5.2.jar ve
+ rtx-consul-client-3.5.2.jar vertx-service-proxy-3.5.2.jar vertx-stack
+ -manager-3.5.2.jar junit-jupiter-params-5.2.0.jar mongodb-driver-asyn
+ c-3.6.1.jar netty-handler-4.1.19.Final.jar vertx-consul-service-3.5.2
+ .jar aether-transport-file-1.1.0.jar aether-transport-http-1.1.0.jar 
+ maven-aether-provider-3.1.0.jar mchange-commons-java-0.2.11.jar netty
+ -resolver-4.1.19.Final.jar vertx-circuit-breaker-3.5.2.jar vertx-rabb
+ itmq-client-3.5.2.jar vertx-service-factory-3.5.2.jar aether-connecto
+ r-basic-1.1.0.jar junit-platform-commons-1.2.0.jar kotlin-script-runt
+ ime-1.2.20.jar netty-codec-dns-4.1.19.Final.jar netty-transport-4.1.1
+ 9.Final.jar vertx-reactive-streams-3.5.2.jar netty-codec-http-4.1.19.
+ Final.jar vertx-service-discovery-3.5.2.jar kotlinx-coroutines-core-0
+ .21.2.jar netty-codec-http2-4.1.19.Final.jar netty-codec-socks-4.1.19
+ .Final.jar vertx-dropwizard-metrics-3.5.2.jar maven-repository-metada
+ ta-3.1.0.jar netty-resolver-dns-4.1.19.Final.jar vertx-tcp-eventbus-b
+ ridge-3.5.2.jar netty-handler-proxy-4.1.19.Final.jar vertx-http-servi
+ ce-factory-3.5.2.jar vertx-lang-kotlin-compiler-3.5.2.jar kotlin-comp
+ iler-embeddable-1.2.20.jar vertx-maven-service-factory-3.5.2.jar vert
+ x-web-templ-jade-3.5.2-shaded.jar vertx-web-templ-mvel-3.5.2-shaded.j
+ ar vertx-lang-kotlin-coroutines-3.5.2.jar vertx-web-templ-thymeleaf-3
+ .5.2-shaded.jar vertx-web-templ-handlebars-3.5.2-shaded.jar netty-tra
+ nsport-native-epoll-4.1.19.Final.jar netty-transport-native-kqueue-4.
+ 1.19.Final.jar netty-tcnative-boringssl-static-2.0.7.Final.jar netty-
+ transport-native-unix-common-4.1.19.Final.jar
 Main-Class: com.mojo.Main
 
