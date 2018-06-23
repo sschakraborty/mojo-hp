@@ -14,6 +14,9 @@ format ELF64
 ;   |   It returns 0 if no such main method is found          |
 ;   +---------------------------------------------------------+
 
+;   Assembler : FASM
+;   Usage : fasm parse_java.asm
+
 
 include 'syscalls.inc'
 public has_main_method
