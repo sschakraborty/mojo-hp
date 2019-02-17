@@ -21,6 +21,8 @@
 
 /* 20 ms granularity */
 
+#define DIFF_ARGS "--brief", "--ignore-trailing-space", "--ignore-blank-lines"
+
 #define MILLIS 1000000
 #define DELTA_SLEEP 20*MILLIS
 #define GRND_NONBLOCK 0x0001
@@ -606,7 +608,7 @@ void judge_cpp()
             close(diff_out[0]);
             dup2(diff_out[1], 1);
             char const* diff_args[] = {
-                "/usr/bin/diff", "--brief",
+                "/usr/bin/diff", DIFF_ARGS,
                 output_file, acc_output_file, NULL
             };
             execve(diff_args[0], (char * const*) diff_args, environ);
@@ -834,7 +836,7 @@ void judge_java()
             close(diff_out[0]);
             dup2(diff_out[1], 1);
             char const* diff_args[] = {
-                "/usr/bin/diff", "--brief",
+                "/usr/bin/diff", DIFF_ARGS,
                 output_file, acc_output_file, NULL
             };
             execve(diff_args[0], (char * const*) diff_args, environ);
@@ -1032,7 +1034,7 @@ void judge_python()
             close(diff_out[0]);
             dup2(diff_out[1], 1);
             char const* diff_args[] = {
-                "/usr/bin/diff", "--brief",
+                "/usr/bin/diff", DIFF_ARGS,
                 output_file, acc_output_file, NULL
             };
             execve(diff_args[0], (char * const*) diff_args, environ);
@@ -1232,7 +1234,7 @@ void judge_ruby()
             close(diff_out[0]);
             dup2(diff_out[1], 1);
             char const* diff_args[] = {
-                "/usr/bin/diff", "--brief",
+                "/usr/bin/diff", DIFF_ARGS,
                 output_file, acc_output_file, NULL
             };
             execve(diff_args[0], (char * const*) diff_args, environ);
