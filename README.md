@@ -1,8 +1,7 @@
+**_Project mojo-hp is deprecated and archived. This project will be succeeded by KJudge @ https://github.com/sschakraborty/KJudge_**
+
 # mojo-hp
 ## Mini Online Judge Operator (High Peformance)
-
-## Project is deprecated and archived
-## This project will be succeeded by project KJudge @ https://github.com/sschakraborty/KJudge
 
 The Mini Online Judge Operator (MOJO) is a high performance **online coding judge platform** developed and maintained by **Subhadra Sundar Chakraborty** (<a href="https://github.com/sschakraborty">@sschakraborty</a>) and **Suvaditya Sur** (<a href="https://github.com/x0r19x91">@x0r19x91</a>). MOJO is built on a custom high performance architecture developed by <a href="https://github.com/sschakraborty">@sschakraborty</a> that makes it massively scalable and distributable over hundreds of nodes. The codes are judged on multiple nodes in parallel in a cluster. The underlying mechanisms are completely non-blocking, asynchronous and event-driven which add to the performance.
 
